@@ -12,7 +12,7 @@ module submodulo_2 #(
 
     estado_t estado;
     logic [15:0] cont;
-    logic reg_A, reg_B
+    logic reg_A, reg_B;
 
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
