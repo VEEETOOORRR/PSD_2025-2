@@ -70,17 +70,22 @@ module submodulo_3 #(
 
     always_comb begin
 
-        case(estado)
+        if (rst) begin 
+            C = 0;
+        end 
 
+        else begin
+            case(estado)
 
-            // Preciso implementar uma varivel para o proximo estado?
+                // Preciso implementar uma varivel para o proximo estado?
 
-            INICIAL  : C = 0;
-            CONTANDO : C = 0;
-            TEMP     : C = 1;
-            default  : C = 0;
+                INICIAL  : C = 0;
+                CONTANDO : C = 0;
+                TEMP     : C = 1;
+                default  : C = 0;
 
-        endcase
+            endcase
+        end
         
     end
 

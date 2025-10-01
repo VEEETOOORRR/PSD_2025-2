@@ -28,8 +28,6 @@ module submodulo_1(
 
         if (rst) begin
             estado <= LAMP_D_A;
-            Tc <= 0;
-            Tp <= 0;
         end
 
         else begin
@@ -86,41 +84,49 @@ module submodulo_1(
 
 
     always_comb begin
-        // O always comb é modelado olhando para o próximo estado?
-        case
+        // O always comb é modelado olhando para o próximo estado? (usar next state??)
 
-            LAMP_L_A: begin
-                led = 0;
-                saida = 1;
-                enable_sub_3 = 1;
-            end
+        if (rst) begin
+            led = 0;
+            saida = 0;
+            enable_sub_3 = 0;
+        end
 
-            LAMP_D_A: begin
-                led = 0;
-                saida = 0;
-                enable_sub_3 = 0;
-            end
+        else begin
+            case
 
-            LAMP_L_M: begin
-                led = 1;
-                saida = 1;
-                enable_sub_3 = 0;
-            end
+                LAMP_L_A: begin
+                    led = 0;
+                    saida = 1;
+                    enable_sub_3 = 1;
+                end
 
-            LAMP_D_M: begin
-                led = 1;
-                saida = 0;
-                enable_sub_3 = 0;
-            end
+                LAMP_D_A: begin
+                    led = 0;
+                    saida = 0;
+                    enable_sub_3 = 0;
+                end
 
-            default: begin
-                led = 0;
-                saida = 0;
-                enable_sub_3 = 0
-            end
-        
-        endcase
+                LAMP_L_M: begin
+                    led = 1;
+                    saida = 1;
+                    enable_sub_3 = 0;
+                end
 
+                LAMP_D_M: begin
+                    led = 1;
+                    saida = 0;
+                    enable_sub_3 = 0;
+                end
+
+                default: begin
+                    led = 0;
+                    saida = 0;
+                    enable_sub_3 = 0
+                end
+            
+            endcase
+        end
 
     end
 
