@@ -38,7 +38,7 @@ module submodulo_3 #(
                 end
 
                 CONTANDO: begin
-                    if (infravermelho) begin
+                    if (!enable || infravermelho) begin
                         estado <= INICIAL;
                         // Precisa fazer Tc = 0 ? nmo INICIAL eu faço
                         Tc <= 0;
