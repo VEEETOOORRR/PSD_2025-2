@@ -9,7 +9,7 @@ output 	    logic	led,
 output		logic	saida );
 
 logic clk_1khz;
-logic A, B, C, D;
+logic A, B, C, D, enable_infra;
 
 divfreq df(
     .clock(clk),
@@ -25,7 +25,8 @@ submodulo_1 sm1 (
     .c(C),
     .d(infravermelho),
 	.led(led),
-	.saida(saida)
+	.saida(saida),
+    .enable_sub_3(enable_infra)
 );
 
 
@@ -41,7 +42,8 @@ submodulo_3 #(.AUTO_SHUTDOWN_T(AUTO_SHUTDOWN_T)) sm3 (
     .clk(clk_1khz),
     .rst(rst),
     .infravermelho(infravermelho),
-    .C(C)
+    .C(C),
+    .enable(enable_infra)
 );
 
 
