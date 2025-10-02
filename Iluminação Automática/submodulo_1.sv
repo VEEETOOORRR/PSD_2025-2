@@ -93,8 +93,8 @@ module submodulo_1(
         end
 
         else begin
+            
             case
-
                 LAMP_L_A: begin
                     led = 0;
                     saida = 1;

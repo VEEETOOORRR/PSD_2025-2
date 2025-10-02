@@ -6,13 +6,14 @@ module submodulo_2 #(
     input   logic   rst,
 	input   logic   push_button,
 	output  logic   A,
-    output  logic   B);
+    output  logic   B
+);
 
     typedef enum logic [2:0] {inicial, db, b, a, temp} estado_t;
 
     estado_t estado;
     logic [15:0] cont;
-    logic reg_A, reg_B
+    logic reg_A, reg_B;
 
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
@@ -118,4 +119,4 @@ module submodulo_2 #(
 
 
 
-endmodule;
+endmodule

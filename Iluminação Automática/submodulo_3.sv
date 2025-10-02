@@ -55,6 +55,7 @@ module submodulo_3 #(
 
                 TEMP: begin
                     estado <= INICIAL;
+                    Tc <= 0;
                 end
 
                 default: begin 
@@ -76,14 +77,10 @@ module submodulo_3 #(
 
         else begin
             case(estado)
-
-                // Preciso implementar uma varivel para o proximo estado?
-
                 INICIAL  : C = 0;
                 CONTANDO : C = 0;
                 TEMP     : C = 1;
                 default  : C = 0;
-
             endcase
         end
         
