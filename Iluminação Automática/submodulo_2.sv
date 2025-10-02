@@ -1,4 +1,3 @@
-
 module submodulo_2 #(
 	parameter DEBOUNCE_P = 300,
 	parameter SWITCH_MODE_MIN_T = 5000)(
@@ -12,7 +11,7 @@ module submodulo_2 #(
 
     estado_t estado;
     logic [15:0] cont;
-    logic reg_A, reg_B
+    logic reg_A, reg_B;
 
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
@@ -80,42 +79,43 @@ module submodulo_2 #(
     end
     
     always_comb begin
-        case(estado)
-            inicial: begin
-                A = 0;
-                B = 0;
-            end
+        if(rst) begin
+            A = 0;
+            B = 0;
+        end else begin
+            case(estado)
+                inicial: begin
+                    A = 0;
+                    B = 0;
+                end
 
-            db: begin
-                A = 0;
-                B = 0;
-            end
+                db: begin
+                    A = 0;
+                    B = 0;
+                end
 
-            b: begin
-                A = 0;
-                B = 0;
-            end
+                b: begin
+                    A = 0;
+                    B = 0;
+                end
 
-            a: begin
-                A = 0;
-                B = 0;
-            end
+                a: begin
+                    A = 0;
+                    B = 0;
+                end
 
-            temp: begin
-                if(reg_A == 1) A = 1;
-                else A = 0;
-                if(reg_B == 1) B = 1;
-                else B = 0;
-            end
+                temp: begin
+                    if(reg_A == 1) A = 1;
+                    else A = 0;
+                    if(reg_B == 1) B = 1;
+                    else B = 0;
+                end
 
-            default: begin
-                A = 0;
-                B = 0;
-            end
-        endcase
-
+                default: begin
+                    A = 0;
+                    B = 0;
+                end
+            endcase
+        end
     end
-
-
-
-endmodule;
+endmodule
