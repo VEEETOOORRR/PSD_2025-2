@@ -34,28 +34,15 @@ module CycloneI_golden_top(
 	assign LED        = ~LED_INV;
 	assign BUTTON_INV = ~BUTTON;
 
-    logic clock_1hz;
-	 
-    df #(.DIV(25000000))
-    divisor_1hz(
-        .reset(BUTTON_INV[0]),
-        .clock(CLOCK_50),
-        .clk_i(clock_1hz)
-    );
-
-    always_ff @(posedge clock_1hz or posedge BUTTON_INV[0]) begin
-        if(BUTTON_INV[0]) LED_INV = 6'b010101;
-        else begin
-            LED_INV <= ~LED_INV;
-        end
-    end
-	 
-    /*
-    always_comb begin
-       LED_INV[0] = BUTTON_INV[0] ^ BUTTON_INV[1];
-       LED_INV[1] = BUTTON_INV[0] & BUTTON_INV[1];		  
-
-    end
-    */
+	controladora #(
+	.DEBOUNCE_P(300),
+   .SWITCH_MODE_MIN_T(5000),
+   .AUTO_SHUTDOWN_T(30000)) control (
+	.clk(CLOCK_50), 
+	.rst(BUTTON_INV[0]),
+	.infravermelho(BUTTON_INV[1]),
+	.push_button(BUTTON_INV[2]),
+	.led(LED_INV[0]),
+	.saida(LED_INV[1]));
 
 endmodule

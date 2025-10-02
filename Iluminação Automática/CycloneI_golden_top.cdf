@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP1C3T144) Path("D:/engcomp/PSD/Projetos/P2/Template_teste/") File("CycloneI_golden_top.sof") MfrSpec(OpMask(1));
+		Device PartName(EP1C3T144) Path("C:/Users/Antonni/Documents/PSD_2025-2/Iluminação Automática/") File("CycloneI_golden_top.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
