@@ -1,0 +1,34 @@
+# Arquivos e pastas gerados pelo Quartus
+*.rpt
+*.summary
+*.smsg
+*.qws
+*.qdf
+*.qdb
+*.sof
+*.pof
+*.jdi
+*.csv
+*.svf
+*.ttf
+*.html
+*.eqn
+*.sld
+*.qip
+*.qxp
+*.qmsg
+*.qsys
+*.qpf
+*.bak
+*.log
+*.tcl
+*.hex
+*.jtag
+*.jbc
+*.sdc
+*.sopcinfo
+*.qws.lock
+*.done
+# Pastas geradas pelo Quartus
+db/
+incremental_db/
