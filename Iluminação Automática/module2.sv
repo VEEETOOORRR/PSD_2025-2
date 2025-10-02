@@ -118,4 +118,4 @@ module submodulo_2 #(
 
 
 
-endmodule;
+endmodule
