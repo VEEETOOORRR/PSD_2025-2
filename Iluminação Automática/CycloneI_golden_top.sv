@@ -34,11 +34,19 @@ module CycloneI_golden_top(
 	assign LED        = ~LED_INV;
 	assign BUTTON_INV = ~BUTTON;
 
+    logic clk_1khz;
+
+    divfreq df(
+        .reset(BUTTON_INV[0]),
+        .clock(CLOCK_50),
+        .clk_i(clk_1khz)
+    );
+
 	controladora #(
 	.DEBOUNCE_P(300),
     .SWITCH_MODE_MIN_T(5000),
     .AUTO_SHUTDOWN_T(30000)) control (
-	.clk(CLOCK_50), 
+	.clk(clk_1khz), 
 	.rst(BUTTON_INV[0]),
 	.infravermelho(BUTTON_INV[1]),
 	.push_button(BUTTON_INV[2]),

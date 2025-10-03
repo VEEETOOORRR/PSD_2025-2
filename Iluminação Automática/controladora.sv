@@ -8,17 +8,10 @@ input		logic	push_button,
 output 	    logic	led,
 output		logic	saida );
 
-logic clk_1khz;
 logic A, B, C, D, enable_infra;
 
-divfreq df(
-    .clock(clk),
-    .reset(rst),
-    .clk_i(clk_1khz)
-);
-
 submodulo_1 sm1 (
-    .clk(clk_1khz),
+    .clk(clk),
     .rst(rst),
     .a(A),
     .b(B),
@@ -31,7 +24,7 @@ submodulo_1 sm1 (
 
 
 submodulo_2 #(.DEBOUNCE_P(DEBOUNCE_P), .SWITCH_MODE_MIN_T(SWITCH_MODE_MIN_T)) sm2 (
-    .clk(clk_1khz),
+    .clk(clk),
     .rst(rst),
     .push_button(push_button),
     .A(A),
@@ -39,15 +32,11 @@ submodulo_2 #(.DEBOUNCE_P(DEBOUNCE_P), .SWITCH_MODE_MIN_T(SWITCH_MODE_MIN_T)) sm
 );
 
 submodulo_3 #(.AUTO_SHUTDOWN_T(AUTO_SHUTDOWN_T)) sm3 (
-    .clk(clk_1khz),
+    .clk(clk),
     .rst(rst),
     .infravermelho(infravermelho),
     .C(C),
     .enable(enable_infra)
 );
-
-
-
-
 
 endmodule
