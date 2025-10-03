@@ -36,8 +36,8 @@ module CycloneI_golden_top(
 
 	controladora #(
 	.DEBOUNCE_P(300),
-   .SWITCH_MODE_MIN_T(5000),
-   .AUTO_SHUTDOWN_T(30000)) control (
+    .SWITCH_MODE_MIN_T(5000),
+    .AUTO_SHUTDOWN_T(30000)) control (
 	.clk(CLOCK_50), 
 	.rst(BUTTON_INV[0]),
 	.infravermelho(BUTTON_INV[1]),
