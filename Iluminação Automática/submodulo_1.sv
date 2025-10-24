@@ -124,8 +124,6 @@ module submodulo_1(
             
             endcase
         end
-
     end
-
 
 endmodule: submodulo_1

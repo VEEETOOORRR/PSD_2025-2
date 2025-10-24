@@ -1,0 +1,4 @@
+- No submodulo1 a, b, c e d estão todos em minusculo no submodulo 2 e 3 estão maiusculos
+- Se precisa estado e proximo estado
+- Reset e Clock no divisor de frequência e nos modulos rst e clk
+- Passou os 30s e ele não apagou o led 

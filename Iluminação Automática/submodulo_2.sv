@@ -5,7 +5,8 @@ module submodulo_2 #(
     input   logic   rst,
 	input   logic   push_button,
 	output  logic   A,
-    output  logic   B);
+    output  logic   B
+);
 
     typedef enum logic [2:0] {inicial, db, b, a, temp} estado_t;
 
