@@ -12,11 +12,8 @@ module submodulo_1(
 
 );
 
-    parameter qtd_estados_module1 = 4;
-
     // Lampada_(Ligada/Desligada)_(Automatico/Manual)
-
-    enum logic [qtd_estados_module1-1:0] {LAMP_L_A, LAMP_D_A, LAMP_L_M, LAMP_D_M} estado;
+    enum logic [1:0] {LAMP_L_A, LAMP_D_A, LAMP_L_M, LAMP_D_M} estado;
     
 
     // Condições
@@ -94,8 +91,7 @@ module submodulo_1(
         end
 
         else begin
-            
-            case
+            case(estado)
                 LAMP_L_A: begin
                     led = 0;
                     saida = 1;
@@ -123,7 +119,7 @@ module submodulo_1(
                 default: begin
                     led = 0;
                     saida = 0;
-                    enable_sub_3 = 0
+                    enable_sub_3 = 0;
                 end
             
             endcase
