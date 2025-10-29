@@ -47,7 +47,7 @@ module decodificador_de_teclado (
                         Tcont <= 0;
                         Tcont_tecla_valid <= 0;
                     end else begin
-                        reg_linha <= {reg_linha[0], reg_linha[3:0]};
+                        reg_linha <= {reg_linha[0], reg_linha[3:1]};
                         reg_coluna <= 4'b0000;
                     end
                 end
@@ -118,6 +118,11 @@ module decodificador_de_teclado (
                 if(Tcont_tecla_valid < 7) begin
                     tecla_valid = 1;
                 end else tecla_valid = 0;
+            end
+
+            default: begin
+                tecla_value = 4'hF;
+                tecla_valid = 0;
             end
         endcase
     end
