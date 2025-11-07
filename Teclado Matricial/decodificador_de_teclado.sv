@@ -28,7 +28,7 @@ module decodificador_de_teclado (
     // Corrigir
     // Possiveis valores de botão pressionado (scan)
     logic [3:0] BP [3:0] = {4'b0111, 4'b1011, 4'b1101, 4'b1110};
-    // Valor botao sem estar pressionado
+      // Valor botao sem estar pressionado
     logic [3:0] BS [3:0] = 4'b1111;
     
     always_ff @(posedge clk or posedge rst) begin
@@ -191,4 +191,5 @@ module decodificador_de_teclado (
     
     end
 
+endmodule
     // RCM é o valor final?
