@@ -11,13 +11,13 @@ module reset (
 
     always_ff @(posedge clk) begin
         if(botao_rst) begin
-            if(cont <= 5) cont <= cont + 1;
+            if(cont <= 5000) cont <= cont + 1;
         end else cont <= 0;
 
     end
 
     always_comb begin
-        if(cont == 5) rst_db = 1;
+        if(cont == 5000) rst_db = 1;
         else rst_db = 0;
     end
 
