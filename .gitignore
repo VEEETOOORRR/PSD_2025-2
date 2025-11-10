@@ -18,7 +18,6 @@
 *.qxp
 *.qmsg
 *.qsys
-*.qpf
 *.bak
 *.log
 *.tcl
@@ -30,9 +29,6 @@
 *.qws.lock
 *.done
 
-*.pin
-*.qsf
-*.cdf
 # Pastas geradas pelo Quartus
 db/
 incremental_db/
