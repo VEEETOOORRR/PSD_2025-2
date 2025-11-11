@@ -16,7 +16,7 @@ module decodificador_de_teclado (
         DECODE
     } estado;
 
-    logic [6:0] Tcont;
+    logic [9:0] Tcont;
     logic [3:0] Tcont_tecla_valid;
     logic [3:0] reg_linha;
     logic [3:0] reg_coluna;
@@ -31,7 +31,7 @@ module decodificador_de_teclado (
         if(rst) begin
             estado <= INIT;
             reg_linha <= 4'b0111;
-            reg_coluna <= 4'b0000;
+            reg_coluna <= 4'b1111;
             value <= 4'hF;
 
         end else begin
@@ -48,7 +48,7 @@ module decodificador_de_teclado (
                         Tcont_tecla_valid <= 0;
                     end else begin
                         reg_linha <= {reg_linha[0], reg_linha[3:1]};
-                        reg_coluna <= 4'b0000;
+                        reg_coluna <= 4'b1111;
                     end
                 end
 
@@ -56,7 +56,7 @@ module decodificador_de_teclado (
                     if(BS) begin
                         estado <= SCAN;
                         Tcont <= 0;
-                    end else if (Tcont >= 100)begin
+                    end else if (Tcont >= 50)begin
                         estado <= DECODE;
                     end else if (BP) begin
                         estado <= DEBOUNCE;
@@ -78,7 +78,7 @@ module decodificador_de_teclado (
                     if(BS) estado <= SCAN;
                     else begin
                         estado <= VALID_KEY;
-                        Tcont_tecla_valid <= Tcont_tecla_valid + 1;
+								if(Tcont_tecla_valid < 8) Tcont_tecla_valid <= Tcont_tecla_valid + 1;
                     end
                 end
 
