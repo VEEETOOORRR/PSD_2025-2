@@ -7,7 +7,9 @@ module CycloneI_golden_top(
     input  logic [3:0]  BUTTON,   // K1, K2, K3, K4 (PULLUP)
     input  logic [5:0]  DIP_U5,   // PULLUP
     input  logic [5:0]  DIP_U6,   // PULLDOWN
-    inout  logic [27:0] GPIO
+    //inout  logic [27:0] GPIO
+    input logic [3:0] GPIO_I,
+    output logic [3:0] GPIO_O
 );
 
     // Inicializacao
@@ -31,5 +33,19 @@ module CycloneI_golden_top(
 	assign HEX_LED    = ~HEX_LED_INV;
 	assign LED        = ~LED_INV;
 	assign BUTTON_INV = ~BUTTON;
+
+    logic clk_slow, tecla_valid;
+    logic [3:0] tecla_value;
+
+    df #(.DIV(25000)) divfreq (.reset(BUTTON_INV[3]), .clock(CLOCK_50), .clk_i(clk_slow));
+
+    decodificador_de_teclado dt (
+        .clk(clk_slow),
+        .rst(BUTTON_INV[3]),
+        .col_matriz({GPIO_I[0], GPIO_I[1], GPIO_I[2], GPIO_I[3]}), //126, 124, 122, 120
+        .lin_matriz({GPIO_O[0], GPIO_O[1], GPIO_O[2], GPIO_O[3]}), //134, 132, 130, 128
+        .tecla_valid(LED_INV[4]),
+        .tecla_value(LED_INV[3:0])
+    );
 
 endmodule

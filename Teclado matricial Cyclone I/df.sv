@@ -3,8 +3,8 @@ module df #(parameter DIV = 25000)
 
   int cont;
 
-  always_ff @(posedge clock or negedge reset) begin
-    if(~reset) begin
+  always_ff @(posedge clock or posedge reset) begin
+    if(reset) begin
       cont  = 0;
       clk_i = 0;
     end

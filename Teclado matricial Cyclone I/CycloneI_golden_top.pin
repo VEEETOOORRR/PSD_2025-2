@@ -64,13 +64,13 @@ CHIP  "CycloneI_golden_top"  ASSIGNED TO AN: EP1C3T144C8
 
 Pin Name/Usage               : Location  : Dir.   : I/O Standard      : Voltage : I/O Bank  : User Assignment
 -------------------------------------------------------------------------------------------------------------
-GPIO[6]                      : 1         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[5]                      : 2         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[4]                      : 3         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[3]                      : 4         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[2]                      : 5         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[1]                      : 6         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
-GPIO[0]                      : 7         : bidir  : 3.3-V LVTTL       :         : 1         : Y              
+RESERVED_INPUT               : 1         :        :                   :         : 1         :                
+RESERVED_INPUT               : 2         :        :                   :         : 1         :                
+RESERVED_INPUT               : 3         :        :                   :         : 1         :                
+RESERVED_INPUT               : 4         :        :                   :         : 1         :                
+RESERVED_INPUT               : 5         :        :                   :         : 1         :                
+RESERVED_INPUT               : 6         :        :                   :         : 1         :                
+RESERVED_INPUT               : 7         :        :                   :         : 1         :                
 VCCIO1                       : 8         : power  :                   : 3.3V    : 1         :                
 GND                          : 9         : gnd    :                   :         :           :                
 RESERVED_INPUT               : 10        :        :                   :         : 1         :                
@@ -183,28 +183,28 @@ GND                          : 116       : gnd    :                   :         
 VCCINT                       : 117       : power  :                   : 1.5V    :           :                
 GND                          : 118       : gnd    :                   :         :           :                
 RESERVED_INPUT               : 119       :        :                   :         : 2         :                
-GPIO[27]                     : 120       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[26]                     : 121       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[25]                     : 122       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[24]                     : 123       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[23]                     : 124       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[22]                     : 125       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[21]                     : 126       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[20]                     : 127       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[19]                     : 128       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[18]                     : 129       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[17]                     : 130       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[16]                     : 131       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[15]                     : 132       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[14]                     : 133       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[13]                     : 134       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
+GPIO_I[3]                    : 120       : input  : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 121       :        :                   :         : 2         :                
+GPIO_I[2]                    : 122       : input  : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 123       :        :                   :         : 2         :                
+GPIO_I[1]                    : 124       : input  : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 125       :        :                   :         : 2         :                
+GPIO_I[0]                    : 126       : input  : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 127       :        :                   :         : 2         :                
+GPIO_O[3]                    : 128       : output : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 129       :        :                   :         : 2         :                
+GPIO_O[2]                    : 130       : output : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 131       :        :                   :         : 2         :                
+GPIO_O[1]                    : 132       : output : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 133       :        :                   :         : 2         :                
+GPIO_O[0]                    : 134       : output : 3.3-V LVTTL       :         : 2         : Y              
 VCCINT                       : 135       : power  :                   : 1.5V    :           :                
 GND                          : 136       : gnd    :                   :         :           :                
 VCCIO2                       : 137       : power  :                   : 3.3V    : 2         :                
 GND                          : 138       : gnd    :                   :         :           :                
-GPIO[12]                     : 139       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[11]                     : 140       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[10]                     : 141       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[9]                      : 142       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[8]                      : 143       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
-GPIO[7]                      : 144       : bidir  : 3.3-V LVTTL       :         : 2         : Y              
+RESERVED_INPUT               : 139       :        :                   :         : 2         :                
+RESERVED_INPUT               : 140       :        :                   :         : 2         :                
+RESERVED_INPUT               : 141       :        :                   :         : 2         :                
+RESERVED_INPUT               : 142       :        :                   :         : 2         :                
+RESERVED_INPUT               : 143       :        :                   :         : 2         :                
+RESERVED_INPUT               : 144       :        :                   :         : 2         :                

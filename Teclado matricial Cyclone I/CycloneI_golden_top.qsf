@@ -42,8 +42,6 @@ set_global_assignment -name TOP_LEVEL_ENTITY CycloneI_golden_top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 11.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:36:11  JUNE 10, 2025"
 set_global_assignment -name LAST_QUARTUS_VERSION 11.0
-set_global_assignment -name SYSTEMVERILOG_FILE df.sv
-set_global_assignment -name SYSTEMVERILOG_FILE CycloneI_golden_top.sv
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -66,27 +64,6 @@ set_location_assignment PIN_4 -to GPIO[3]
 set_location_assignment PIN_3 -to GPIO[4]
 set_location_assignment PIN_2 -to GPIO[5]
 set_location_assignment PIN_1 -to GPIO[6]
-set_location_assignment PIN_144 -to GPIO[7]
-set_location_assignment PIN_143 -to GPIO[8]
-set_location_assignment PIN_142 -to GPIO[9]
-set_location_assignment PIN_141 -to GPIO[10]
-set_location_assignment PIN_140 -to GPIO[11]
-set_location_assignment PIN_139 -to GPIO[12]
-set_location_assignment PIN_134 -to GPIO[13]
-set_location_assignment PIN_133 -to GPIO[14]
-set_location_assignment PIN_132 -to GPIO[15]
-set_location_assignment PIN_131 -to GPIO[16]
-set_location_assignment PIN_130 -to GPIO[17]
-set_location_assignment PIN_129 -to GPIO[18]
-set_location_assignment PIN_128 -to GPIO[19]
-set_location_assignment PIN_127 -to GPIO[20]
-set_location_assignment PIN_126 -to GPIO[21]
-set_location_assignment PIN_125 -to GPIO[22]
-set_location_assignment PIN_124 -to GPIO[23]
-set_location_assignment PIN_123 -to GPIO[24]
-set_location_assignment PIN_122 -to GPIO[25]
-set_location_assignment PIN_121 -to GPIO[26]
-set_location_assignment PIN_120 -to GPIO[27]
 set_location_assignment PIN_83 -to HEX_EN[0]
 set_location_assignment PIN_84 -to HEX_EN[1]
 set_location_assignment PIN_85 -to HEX_EN[2]
@@ -118,4 +95,16 @@ set_location_assignment PIN_51 -to DIP_U6[3]
 set_location_assignment PIN_53 -to DIP_U6[4]
 set_location_assignment PIN_54 -to DIP_U6[5]
 set_global_assignment -name RESERVE_ALL_UNUSED_PINS_NO_OUTPUT_GND "AS INPUT TRI-STATED"
+set_global_assignment -name SYSTEMVERILOG_FILE decode.sv
+set_global_assignment -name SYSTEMVERILOG_FILE df.sv
+set_global_assignment -name SYSTEMVERILOG_FILE CycloneI_golden_top.sv
+set_location_assignment PIN_126 -to GPIO_I[0]
+set_location_assignment PIN_124 -to GPIO_I[1]
+set_location_assignment PIN_122 -to GPIO_I[2]
+set_location_assignment PIN_120 -to GPIO_I[3]
+set_location_assignment PIN_134 -to GPIO_O[0]
+set_location_assignment PIN_132 -to GPIO_O[1]
+set_location_assignment PIN_130 -to GPIO_O[2]
+set_location_assignment PIN_128 -to GPIO_O[3]
+set_global_assignment -name MISC_FILE "C:/Users/Antonni/Documents/PSD_2025-2/Teclado matricial Cyclone I/CycloneI_golden_top.dpf"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
