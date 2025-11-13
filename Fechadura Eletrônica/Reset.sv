@@ -17,7 +17,7 @@ module reset (
     end
 
     always_comb begin
-        if(cont == 5000) rst_db = 1;
+        if(cont >= 5000) rst_db = 1;
         else rst_db = 0;
     end
 
