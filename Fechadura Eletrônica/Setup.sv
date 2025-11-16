@@ -42,7 +42,7 @@ module setup (
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
 		end else begin
-			case(estado)
+			case(estado) // todo: adicionar condição # aos estados
 				IDLE: begin
 					if(setup_on) estado <= ESPERA_SENHA_MASTER;
 					else estado <= IDLE;
@@ -54,69 +54,136 @@ module setup (
 				end
 
 				HABILITA_BIP: begin
-					if((digitos_value[0] == 1 || digitos_valid[0] == 0) && digitos_valid) begin
+					if((digitos_value[0] == 1 || digitos_value[0] == 0) && digitos_valid) begin
 						reg_data_setup_new.bip_status <= digitos_value[0];
 						estado <= TEMPO_BIP;
 					end else estado <= HABILITA_BIP;
 				end
 
 				TEMPO_BIP: begin
-					if(digitos_valid[1]*10 + digitos_valid[0] )
+					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
+						reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
+						estado <= TEMPO_TRC;
+					end else estado <= TEMPO_BIP;
 				end
 
 				TEMPO_TRC: begin
+					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
+						reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
+						estado <= SENHA_MASTER;
+					end else estado <= TEMPO_TRC;
 				end
 
 				SENHA_MASTER: begin
+					if((digitos_value[4] != 4'hF) && digitos_valid) begin
+						reg_data_setup_new.senha_master <= digitos_value;
+						estado <= SENHA_1;
+					end else estado <= SENHA_MASTER;
 				end
 
 				SENHA_1: begin
+					if((digitos_value[4] != 4'hF) && digitos_valid) begin
+						reg_data_setup_new.senha_1 <= digitos_value;
+						estado <= SENHA_2;
+					end else estado <= SENHA_1;
 				end
 
 				SENHA_2: begin
+					if((digitos_value[4] != 4'hF) && digitos_valid) begin
+						reg_data_setup_new.senha_2 <= digitos_value;
+						estado <= SENHA_3;
+					end else estado <= SENHA_2;
 				end
 
 				SENHA_3: begin
+					if((digitos_value[4] != 4'hF) && digitos_valid) begin
+						reg_data_setup_new.senha_3 <= digitos_value;
+						estado <= SENHA_4;
+					end else estado <= SENHA_3;
 				end
 
 				SENHA_4: begin
+					if((digitos_value[4] != 4'hF) && digitos_valid) begin
+						reg_data_setup_new.senha_4 <= digitos_value;
+						estado <= SAVE;
+					end else estado <= SENHA_4;
+				end
+
+				SAVE: begin
+					estado <= IDLE;
 				end
 			endcase
 		end
 	end
 
-	always_comb begin
+	always_comb begin // todo: saída dos displays
 		if(rst) begin
 		end else begin
 			case(estado)
 				IDLE: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 0;
 				end
 
 				ESPERA_SENHA_MASTER: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				HABILITA_BIP: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				TEMPO_BIP: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				TEMPO_TRC: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				SENHA_MASTER: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				SENHA_1: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				SENHA_2: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				SENHA_3: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
 				end
 
 				SENHA_4: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
+				end
+
+				SAVE: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 1;
+					display_en = 1;
 				end
 			endcase
 		
