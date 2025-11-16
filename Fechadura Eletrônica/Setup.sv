@@ -61,7 +61,7 @@ module setup (
 				end
 
 				TEMPO_BIP: begin
-					if()
+					if(digitos_valid[1]*10 + digitos_valid[0] )
 				end
 
 				TEMPO_TRC: begin
