@@ -93,7 +93,7 @@ output		logic 		digitos_valid
                     if(value == 4'hA) estado <= VALID_KEY; //Dígito *
                     else if(value == 4'hB) begin // Dígito #
                         estado <= VALID_KEY;
-                        reg_digitos_value.digits <= '{default: 4'hF};
+                        reg_digitos_value.digits <= '{default: 4'hF}; 
                     end else begin
                         if(reg_digitos_value.digits[19] == 4'hF) begin
                             reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};

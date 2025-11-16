@@ -116,7 +116,7 @@ module setup (
 		end
 	end
 
-	always_comb begin // todo: saída dos displays
+	always_comb begin
 		if(rst) begin
 		end else begin
 			case(estado)
