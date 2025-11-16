@@ -48,26 +48,26 @@ module setup (
 					else estado <= IDLE;
 				end
 
-				ESPERA_SENHA_MASTER: begin
+				ESPERA_SENHA_MASTER: begin // todo: corrigir senha pra shiftar
 					if((digitos_value == reg_data_setup_new.senha_master) && digitos_valid) estado <= HABILITA_BIP;
 					else estado <= ESPERA_SENHA_MASTER;
 				end
 
-				HABILITA_BIP: begin
+				HABILITA_BIP: begin // todo: ajeitar pra salvar no registrador independente de apertar *
 					if((digitos_value[0] == 1 || digitos_value[0] == 0) && digitos_valid) begin
 						reg_data_setup_new.bip_status <= digitos_value[0];
 						estado <= TEMPO_BIP;
 					end else estado <= HABILITA_BIP;
 				end
 
-				TEMPO_BIP: begin
+				TEMPO_BIP: begin // todo: ajeitar pra salvar no registrador independente de apertar *. Alem disso, salvar valores padrão caso esteja fora do intervalo.
 					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
 						reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
 						estado <= TEMPO_TRC;
 					end else estado <= TEMPO_BIP;
 				end
 
-				TEMPO_TRC: begin
+				TEMPO_TRC: begin // todo: ajeitar pra salvar no registrador independente de apertar *. Alem disso, salvar valores padrão caso esteja fora do intervalo.
 					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
 						reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
 						estado <= SENHA_MASTER;
@@ -130,60 +130,120 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h1;
 				end
 
 				HABILITA_BIP: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = reg_data_setup_new.bip_status;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h1;
 				end
 
 				TEMPO_BIP: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = reg_data_setup_new.bip_time % 10;
+					bcd_pac.BCD1 = reg_data_setup_new.bip_time / 10;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h2;
 				end
 
 				TEMPO_TRC: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = reg_data_setup_new.tranca_aut_time % 10;
+					bcd_pac.BCD1 = reg_data_setup_new.tranca_aut_time / 10;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h3;
 				end
 
 				SENHA_MASTER: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h4;
 				end
 
 				SENHA_1: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h5;
 				end
 
 				SENHA_2: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h6;
 				end
 
 				SENHA_3: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h7;
 				end
 
 				SENHA_4: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h8;
 				end
 
 				SAVE: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 1;
 					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'hF;
 				end
 			endcase
 		
