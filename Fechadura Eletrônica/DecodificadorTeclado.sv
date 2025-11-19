@@ -133,50 +133,50 @@ output		logic 		digitos_valid
         case (estado)
 
             INIT: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = {20{4'hF}};
             end
 
             SCAN: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
             DEBOUNCE: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
             DECODE: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
 
             OUTPUT_READY: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
 
             VALID_KEY: begin
-                tecla_valid = 1;
+                digitos_valid = 1;
                 digitos_value = reg_digitos_value;
             end
 
             TIMEOUT: begin
-                tecla_valid = 1;
+                digitos_valid = 1;
                 digitos_value = {20{4'hE}};
             end
 
             HOLD: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
 
             LIMPA: begin
-                tecla_valid = 0;
+                digitos_valid = 0;
                 digitos_value = {20{4'hF}}
             end
 
             default: begin
-                tecla_valid = 0;
+                digitos_vlaid = 0;
                 digitos_value = {20{4'hF}}
             end
         endcase
