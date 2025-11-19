@@ -15,6 +15,7 @@ module setup (
 	typedef enum logic [3:0] {
 		IDLE,
 		ESPERA_SENHA_MASTER,
+		VERIFICA_SENHA_MASTER,
 		HABILITA_BIP,
 		TEMPO_BIP,
 		TEMPO_TRC,
@@ -29,6 +30,9 @@ module setup (
 	estado_t estado;
 
 	setupPac_t reg_data_setup_new;
+	senhaPac_t senha_input;
+	logic senha_valida;
+
 
 	always_ff @(posedge clk or posedge rst) begin
 		if(rst) begin
@@ -41,6 +45,8 @@ module setup (
 			reg_data_setup_new.senha_2 <= {20{4'hF}};
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
+			senha_input <= {20{4'hF}};
+			senha_valida <= 0;
 		end else begin
 			case(estado) // todo: adicionar condição # aos estados
 				IDLE: begin
@@ -49,8 +55,24 @@ module setup (
 				end
 
 				ESPERA_SENHA_MASTER: begin // todo: corrigir senha pra shiftar
-					if((digitos_value == reg_data_setup_new.senha_master) && digitos_valid) estado <= HABILITA_BIP;
+
+					if(digitos_value == {20{4'hB}} && digitos_valid) estado <= HABILITA_BIP;
+					else if((digitos_value == reg_data_setup_new.senha_master) && digitos_valid) estado <= HABILITA_BIP;
 					else estado <= ESPERA_SENHA_MASTER;
+
+					senha_input <= digitos_value;
+				end
+
+				VERIFICA_SENHA_MASTER: begin
+					if(senha_input == {20{4'hF}}) estado <= ESPERA_SENHA_MASTER;
+					else begin
+						for(int i = 0; i < 20; i++) begin
+							if((reg_data_setup_new.senha_master[i] != senha_input[i]) && (reg_data_setup_new.senha_master[i] != 4'hF || senha_input[i] != 4'hF)) begin
+								estado <= VERIFICA_SENHA_MASTER;
+								senha_input <= {4'hF, senha_input[19:1]};
+							end else estado <= HABILITA_BIP
+						end
+					end
 				end
 
 				HABILITA_BIP: begin // todo: ajeitar pra salvar no registrador independente de apertar *
@@ -127,6 +149,18 @@ module setup (
 				end
 
 				ESPERA_SENHA_MASTER: begin
+					data_setup_new = reg_data_setup_new;
+					data_setup_ok = 0;
+					display_en = 1;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'h1;
+				end
+
+				VERIFICA_SENHA_MASTER: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
@@ -249,4 +283,10 @@ module setup (
 		
 		end
 	end
+
+    function logic verifica_senha(input senhaPac_t senha_salva, senha_input);
+
+        return 1;
+    endfunction
+
 endmodule

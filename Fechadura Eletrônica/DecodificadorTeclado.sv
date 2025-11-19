@@ -83,6 +83,12 @@ output		logic 		digitos_valid
                     end
                 end
 
+                TIMEOUT: begin
+                    reg_digitos_value.digits <= {20{4'hF}};
+                    estado <= SCAN;
+                    Tcont_timeout <= 0;
+                end
+
                 DECODE: begin
                     value <= decoder(reg_linha, reg_coluna);
                     estado <= OUTPUT_READY;
@@ -157,6 +163,11 @@ output		logic 		digitos_valid
             TIMEOUT: begin
                 tecla_valid = 1;
                 digitos_value = {20{4'hE}};
+            end
+
+            HOLD: begin
+                tecla_valid = 0;
+                digitos_value = reg_digitos_value;
             end
 
             LIMPA: begin
