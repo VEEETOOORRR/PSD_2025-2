@@ -10,7 +10,7 @@ output 	    senhaPac_t	digitos_value,
 output		logic 		digitos_valid
 );
 
-    enum logic [2:0] {
+    enum logic [3:0] {
         INIT, 
         SCAN, 
         DEBOUNCE, 
@@ -18,7 +18,8 @@ output		logic 		digitos_valid
         OUTPUT_READY, 
         DECODE,
         TIMEOUT,
-        HOLD
+        HOLD,
+        LIMPA
     } estado;
 
     logic [9:0] Tcont_db;
@@ -87,27 +88,34 @@ output		logic 		digitos_valid
                     estado <= OUTPUT_READY;
                     Tcont_timeout <= 0;
                     Tcont_db <= 0;
+
                 end
 
                 OUTPUT_READY: begin
-                    if(value == 4'hA) estado <= VALID_KEY; //Dígito *
+                    //if((reg_digitos_value.digits[19] == 4'hF) && (value != 4'hA) && (value != 4'hB)) // todo: SABER SE O ARRAY CONTINUA SHIFTANDO DEPOIS DE CHEIO
+                    if((value != 4'hA) && (value != 4'hB))
+                        reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};
+                        estado <= HOLD;
+                    else if(value == 4'hA) // Dígito *
+                        estado <= VALID_KEY; 
                     else if(value == 4'hB) begin // Dígito #
                         estado <= VALID_KEY;
-                        reg_digitos_value.digits <= '{default: 4'hF}; 
-                    end else begin
-                        if(reg_digitos_value.digits[19] == 4'hF) begin
-                            reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};
-                        end
+                        reg_digitos_value.digits <= {20{4'hB}};
                     end
                 end
 
                 VALID_KEY: begin
-                    estado <= HOLD;
+                    estado <= LIMPA;
                 end
 
                 HOLD: begin
                     if(BS) estado <= SCAN;
                     else estado <= HOLD;
+                end
+
+                LIMPA: begin
+                    reg_digitos_value.digits <= {20{4'hF}};
+                    estado <= HOLD;
                 end
 
             endcase
@@ -143,13 +151,17 @@ output		logic 		digitos_valid
 
             VALID_KEY: begin
                 tecla_valid = 1;
-                if(value == 4'hB) digitos_value = {20{4'hB}}; // Enche o array de B por 1 pulso de clock (#)
-                else digitos_value = reg_digitos_value; // Para quando value == A (*)
+                digitos_value = reg_digitos_value;
             end
 
             TIMEOUT: begin
                 tecla_valid = 1;
                 digitos_value = {20{4'hE}};
+            end
+
+            LIMPA: begin
+                tecla_valid = 0;
+                digitos_value = {20{4'hF}}
             end
 
             default: begin

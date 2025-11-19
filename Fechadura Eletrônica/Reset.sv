@@ -6,9 +6,6 @@ module reset (
 
     logic [12:0] cont;
 
-    //typedef enum logic [1:0] {IDLE, DB, R, TEMP} estado_t;
-    //estado_t estado;
-
     always_ff @(posedge clk) begin
         if(botao_rst) begin
             if(cont <= 5000) cont <= cont + 1;
@@ -17,7 +14,7 @@ module reset (
     end
 
     always_comb begin
-        if(cont >= 5000) rst_db = 1;
+        if(cont == 5000) rst_db = 1;
         else rst_db = 0;
     end
 
