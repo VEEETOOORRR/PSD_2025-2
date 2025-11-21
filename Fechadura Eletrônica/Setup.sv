@@ -14,8 +14,8 @@ module setup (
 
 	typedef enum logic [3:0] {
 		IDLE,
-		ESPERA_SENHA_MASTER,
-		VERIFICA_SENHA_MASTER,
+		//ESPERA_SENHA_MASTER,
+		//VERIFICA_SENHA_MASTER,
 		HABILITA_BIP,
 		TEMPO_BIP,
 		TEMPO_TRC,
@@ -30,8 +30,6 @@ module setup (
 	estado_t estado;
 
 	setupPac_t reg_data_setup_new;
-	senhaPac_t senha_input;
-	logic senha_valida;
 
 
 	always_ff @(posedge clk or posedge rst) begin
@@ -45,8 +43,6 @@ module setup (
 			reg_data_setup_new.senha_2 <= {20{4'hF}};
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
-			senha_input <= {20{4'hF}};
-			senha_valida <= 0;
 		end else begin
 			case(estado) // todo: adicionar condição # aos estados
 				IDLE: begin
@@ -54,7 +50,7 @@ module setup (
 					else estado <= IDLE;
 				end
 
-				ESPERA_SENHA_MASTER: begin // todo: corrigir senha pra shiftar
+				/*ESPERA_SENHA_MASTER: begin 
 
 					if(digitos_value == {20{4'hB}} && digitos_valid) estado <= HABILITA_BIP;
 					else if((digitos_value == reg_data_setup_new.senha_master) && digitos_valid) estado <= HABILITA_BIP;
@@ -84,26 +80,51 @@ module setup (
 							senha_input <= {4'hF, senha_input[19:1]};
 						end
 					end
-				end
+				end*/
 
-				HABILITA_BIP: begin // todo: ajeitar pra salvar no registrador independente de apertar *
-					if((digitos_value[0] == 1 || digitos_value[0] == 0) && digitos_valid) begin
-						reg_data_setup_new.bip_status <= digitos_value[0];
-						estado <= TEMPO_BIP;
+				HABILITA_BIP: begin
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= TEMPO_BIP;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[0] == 0 || digitos_value[0] == 1) begin
+								reg_data_setup_new.bip_status <= digitos_value[0];
+								estado <= TEMPO_BIP;	
+							end else estado <= HABILITA_BIP;
+						end
 					end else estado <= HABILITA_BIP;
 				end
 
-				TEMPO_BIP: begin // todo: ajeitar pra salvar no registrador independente de apertar *. Alem disso, salvar valores padrão caso esteja fora do intervalo.
-					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
-						reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
-						estado <= TEMPO_TRC;
+				TEMPO_BIP: begin
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= TEMPO_TRC;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
+								reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
+								estado <= TEMPO_TRC;
+							end else begin
+								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.bip_time <= 5;
+								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.bip_time <= 60;
+								estado <= TEMPO_TRC;
+							end
+						end
 					end else estado <= TEMPO_BIP;
 				end
-
-				TEMPO_TRC: begin // todo: ajeitar pra salvar no registrador independente de apertar *. Alem disso, salvar valores padrão caso esteja fora do intervalo.
-					if((digitos_value[1]*10 + digitos_value[0] < 60) && (digitos_value[1]*10 + digitos_value[0] > 5) && digitos_valid) begin
-						reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
-						estado <= SENHA_MASTER;
+				TEMPO_TRC: begin
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= SENHA_MASTER;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
+								reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
+								estado <= SENHA_MASTER;
+							end else begin
+								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.tranca_aut_time <= 5;
+								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.tranca_aut_time <= 60;
+								estado <= SENHA_MASTER;
+							end
+						end
 					end else estado <= TEMPO_TRC;
 				end
 
@@ -159,7 +180,7 @@ module setup (
 					display_en = 0;
 				end
 
-				ESPERA_SENHA_MASTER: begin
+				/*ESPERA_SENHA_MASTER: begin
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
@@ -181,7 +202,7 @@ module setup (
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
 					bcd_pac.BCD5 = 4'h1;
-				end
+				end*/
 
 				HABILITA_BIP: begin
 					data_setup_new = reg_data_setup_new;
@@ -295,10 +316,4 @@ module setup (
 		end
 	end
 
-    function logic verifica_senha(input senhaPac_t senha_salva, senha_input);
-
-        return 1;
-    endfunction
-
 endmodule
-

@@ -98,7 +98,6 @@ output		logic 		digitos_valid
                 end
 
                 OUTPUT_READY: begin
-                    //if((reg_digitos_value.digits[19] == 4'hF) && (value != 4'hA) && (value != 4'hB)) // todo: SABER SE O ARRAY CONTINUA SHIFTANDO DEPOIS DE CHEIO
                     if((value != 4'hA) && (value != 4'hB))
                         reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};
                         estado <= HOLD;
