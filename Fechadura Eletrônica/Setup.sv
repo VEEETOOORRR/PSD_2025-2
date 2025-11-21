@@ -64,13 +64,24 @@ module setup (
 				end
 
 				VERIFICA_SENHA_MASTER: begin
-					if(senha_input == {20{4'hF}}) estado <= ESPERA_SENHA_MASTER;
-					else begin
+					if(senha_input == {20{4'hF}}) begin
+						estado <= ESPERA_SENHA_MASTER;
+					end else begin
+						logic senha_correta = 1;
+						
 						for(int i = 0; i < 20; i++) begin
-							if((reg_data_setup_new.senha_master[i] != senha_input[i]) && (reg_data_setup_new.senha_master[i] != 4'hF || senha_input[i] != 4'hF)) begin
-								estado <= VERIFICA_SENHA_MASTER;
-								senha_input <= {4'hF, senha_input[19:1]};
-							end else estado <= HABILITA_BIP
+							if(reg_data_setup_new.senha_master[i] != 4'hF && 
+							reg_data_setup_new.senha_master[i] != senha_input[i]) begin
+								senha_correta = 0;
+								break;
+							end
+						end
+						
+						if(senha_correta) begin
+							estado <= HABILITA_BIP;
+						end else begin
+							estado <= VERIFICA_SENHA_MASTER;
+							senha_input <= {4'hF, senha_input[19:1]};
 						end
 					end
 				end
@@ -290,3 +301,4 @@ module setup (
     endfunction
 
 endmodule
+

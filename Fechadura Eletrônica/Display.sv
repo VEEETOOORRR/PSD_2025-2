@@ -53,7 +53,14 @@ module display (
             HEX4 = 7'b1111111;
             HEX5 = 7'b1111111;
         end else begin
-            if(flag_enable == 0) begin
+            if(enable_o == enable_s) begin
+                HEX0 = 7'b1111111;
+                HEX1 = 7'b1111111;
+                HEX2 = 7'b1111111;
+                HEX3 = 7'b1111111;
+                HEX4 = 7'b1111111;
+                HEX5 = 7'b1111111;
+            end else if(enable_o) begin
                 HEX0 = bcd_7seg(bcd_packet_operacional_reg.BCD0);
                 HEX1 = bcd_7seg(bcd_packet_operacional_reg.BCD1);
                 HEX2 = bcd_7seg(bcd_packet_operacional_reg.BCD2);
