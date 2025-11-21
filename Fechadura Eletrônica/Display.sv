@@ -10,9 +10,9 @@ module display (
 
     bcdPac_t bcd_packet_operacional_reg, bcd_packet_setup_reg;
 
-    logic flag_enable; // Qual enable foi ativado por último. 0 -> Operacional, 1 -> Setup
+    logic flag_enable; // Qual enable foi ativado por último, para razões de debug. 0 -> Operacional, 1 -> Setup
 
-    always_ff(posedge clk or posedge rst) begin
+    always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
             bcd_packet_operacional_reg.BCD0 <= 4'hF;
             bcd_packet_operacional_reg.BCD1 <= 4'hF;
