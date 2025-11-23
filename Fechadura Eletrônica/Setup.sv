@@ -44,9 +44,9 @@ module setup (
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
 		end else begin
-			case(estado) // todo: adicionar condição # aos estados
+			case(estado)
 				IDLE: begin
-					if(setup_on) estado <= ESPERA_SENHA_MASTER;
+					if(setup_on) estado <= HABILITA_BIP;
 					else estado <= IDLE;
 				end
 
@@ -129,37 +129,91 @@ module setup (
 				end
 
 				SENHA_MASTER: begin
-					if((digitos_value[4] != 4'hF) && digitos_valid) begin
-						reg_data_setup_new.senha_master <= digitos_value;
-						estado <= SENHA_1;
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= SENHA_1;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[4] != 4'hF) begin
+								for (int i = 0; i < 12; i++) begin // todo Verificar essa abordagem melhor com Eduardo
+									reg_data_setup_new.senha_master.digits[i] <= digitos_value.digits[i];
+								end
+								for (int i = 12; i < 20; i++) begin
+									reg_data_setup_new.senha_master.digits[i] <= 4'hF;
+								end
+								estado <= SENHA_1;
+							end
+						end
 					end else estado <= SENHA_MASTER;
 				end
 
 				SENHA_1: begin
-					if((digitos_value[4] != 4'hF) && digitos_valid) begin
-						reg_data_setup_new.senha_1 <= digitos_value;
-						estado <= SENHA_2;
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= SENHA_2;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[4] != 4'hF) begin
+								for (int i = 0; i < 12; i++) begin // todo Verificar essa abordagem melhor com Eduardo
+									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
+								end
+								for (int i = 12; i < 20; i++) begin
+									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
+								end
+								estado <= SENHA_2;
+							end
+						end
 					end else estado <= SENHA_1;
 				end
 
 				SENHA_2: begin
-					if((digitos_value[4] != 4'hF) && digitos_valid) begin
-						reg_data_setup_new.senha_2 <= digitos_value;
-						estado <= SENHA_3;
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= SENHA_3;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[4] != 4'hF) begin
+								for (int i = 0; i < 12; i++) begin // todo Verificar essa abordagem melhor com Eduardo
+									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
+								end
+								for (int i = 12; i < 20; i++) begin
+									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
+								end
+								estado <= SENHA_3;
+							end
+						end
 					end else estado <= SENHA_2;
 				end
 
 				SENHA_3: begin
-					if((digitos_value[4] != 4'hF) && digitos_valid) begin
-						reg_data_setup_new.senha_3 <= digitos_value;
-						estado <= SENHA_4;
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}}) estado <= SENHA_4;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[4] != 4'hF) begin
+								for (int i = 0; i < 12; i++) begin // todo Verificar essa abordagem melhor com Eduardo
+									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
+								end
+								for (int i = 12; i < 20; i++) begin
+									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
+								end
+								estado <= SENHA_4;
+							end
+						end
 					end else estado <= SENHA_3;
 				end
 
-				SENHA_4: begin
-					if((digitos_value[4] != 4'hF) && digitos_valid) begin
-						reg_data_setup_new.senha_4 <= digitos_value;
-						estado <= SAVE;
+				SENHA_3: begin
+					if(digitos_valid) begin
+						if(digitos_value == {20{4'hF}} || digitos_value == {20{4'hB}}) estado <= SAVE;
+						else begin
+							if(digitos_value[4] != 4'hF) begin
+								for (int i = 0; i < 12; i++) begin // todo Verificar essa abordagem melhor com Eduardo
+									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
+								end
+								for (int i = 12; i < 20; i++) begin
+									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
+								end
+								estado <= SAVE;
+							end
+						end
 					end else estado <= SENHA_4;
 				end
 
@@ -178,6 +232,12 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 0;
+					bcd_pac.BCD0 = 4'hF;
+					bcd_pac.BCD1 = 4'hF;
+					bcd_pac.BCD2 = 4'hF;
+					bcd_pac.BCD3 = 4'hF;
+					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD5 = 4'hF;
 				end
 
 				/*ESPERA_SENHA_MASTER: begin
@@ -208,7 +268,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = reg_data_setup_new.bip_status;
+					if(digitos_value[0] == 0 || digitos_value[0] == 1) bcd_pac.BCD0 = digitos_value[0];
+					else bcd_pac.BCD0 = 4'hF;
 					bcd_pac.BCD1 = 4'hF;
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
@@ -220,8 +281,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = reg_data_setup_new.bip_time % 10;
-					bcd_pac.BCD1 = reg_data_setup_new.bip_time / 10;
+					bcd_pac.BCD0 = digitos_value[0] % 10;
+					bcd_pac.BCD1 = digitos_value[1] / 10;
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
@@ -232,8 +293,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = reg_data_setup_new.tranca_aut_time % 10;
-					bcd_pac.BCD1 = reg_data_setup_new.tranca_aut_time / 10;
+					bcd_pac.BCD0 = digitos_value[0] % 10;
+					bcd_pac.BCD1 = digitos_value[1] / 10;
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
