@@ -14,8 +14,6 @@ module setup (
 
 	typedef enum logic [3:0] {
 		IDLE,
-		//ESPERA_SENHA_MASTER,
-		//VERIFICA_SENHA_MASTER,
 		HABILITA_BIP,
 		TEMPO_BIP,
 		TEMPO_TRC,
@@ -200,7 +198,7 @@ module setup (
 					end else estado <= SENHA_3;
 				end
 
-				SENHA_3: begin
+				SENHA_4: begin
 					if(digitos_valid) begin
 						if(digitos_value == {20{4'hF}} || digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
