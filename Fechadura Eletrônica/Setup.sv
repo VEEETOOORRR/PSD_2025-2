@@ -47,8 +47,12 @@ module setup (
 		end else begin
 			case(estado)
 				IDLE: begin
-					if(setup_on) estado <= HABILITA_BIP;
+					if(setup_on) begin
+						estado <= HABILITA_BIP;
+						reg_digitos <= {20{4'hF}};
+					end
 					else estado <= IDLE;
+
 				end
 
 				/*ESPERA_SENHA_MASTER: begin 
@@ -91,7 +95,10 @@ module setup (
 							if(digitos_value[0] == 0 || digitos_value[0] == 1) begin
 								reg_data_setup_new.bip_status <= digitos_value[0];
 								estado <= TEMPO_BIP;
-							end else estado <= HABILITA_BIP;
+							end else begin
+								estado <= HABILITA_BIP;
+								reg_digitos <= {20{4'hF}};
+							end
 						end
 					end else begin 
 						estado <= HABILITA_BIP;
@@ -103,16 +110,21 @@ module setup (
 
 				TEMPO_BIP: begin
 					if(digitos_valid && digitos_value != {20{4'hE}}) begin
-						if(digitos_value == {20{4'hF}}) estado <= TEMPO_TRC;
+						if(digitos_value == {20{4'hF}}) begin
+							estado <= TEMPO_TRC;
+							reg_digitos <= {20{4'hF}};
+						end
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if((reg_digitos[1]*10 + reg_digitos[0] <= 60) && (reg_digitos[1]*10 + reg_digitos[0] >= 5)) begin
 								reg_data_setup_new.bip_time <= reg_digitos[1]*10 + reg_digitos[0];
 								estado <= TEMPO_TRC;
+								reg_digitos <= {20{4'hF}};
 							end else begin
 								if(reg_digitos[1]*10 + reg_digitos[0] < 5) reg_data_setup_new.bip_time <= 5;
 								if(reg_digitos[1]*10 + reg_digitos[0] > 60) reg_data_setup_new.bip_time <= 60;
 								estado <= TEMPO_TRC;
+								reg_digitos <= {20{4'hF}};
 							end
 						end
 					end else begin
@@ -132,7 +144,10 @@ module setup (
 				end
 				TEMPO_TRC: begin
 					if(digitos_valid && digitos_value != {20{4'hE}}) begin
-						if(digitos_value == {20{4'hF}}) estado <= SENHA_MASTER;
+						if(digitos_value == {20{4'hF}}) begin
+							estado <= SENHA_MASTER;
+							reg_digitos <= {20{4'hF}};
+						end
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if((reg_digitos[1]*10 + reg_digitos[0] <= 60) && (reg_digitos[1]*10 + reg_digitos[0] >= 5)) begin
