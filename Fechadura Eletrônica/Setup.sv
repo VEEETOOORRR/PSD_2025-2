@@ -29,6 +29,8 @@ module setup (
 
 	setupPac_t reg_data_setup_new;
 
+	senhaPac_t reg_digitos;
+
 
 	always_ff @(posedge clk or posedge rst) begin
 		if(rst) begin
@@ -41,6 +43,7 @@ module setup (
 			reg_data_setup_new.senha_2 <= {20{4'hF}};
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
+			reg_digitos <= {20{4'hF}};
 		end else begin
 			case(estado)
 				IDLE: begin
@@ -87,10 +90,15 @@ module setup (
 						else begin
 							if(digitos_value[0] == 0 || digitos_value[0] == 1) begin
 								reg_data_setup_new.bip_status <= digitos_value[0];
-								estado <= TEMPO_BIP;	
+								estado <= TEMPO_BIP;
 							end else estado <= HABILITA_BIP;
 						end
-					end else estado <= HABILITA_BIP;
+					end else begin 
+						estado <= HABILITA_BIP;
+						if(digitos_value[0] == 4'hF) reg_digitos[0] <= reg_data_setup_new.bip_status;
+						else if(digitos_value[0] > 1) reg_digitos[0] <= reg_digitos[0];
+						else reg_digitos[0] <= digitos_value[0]; 
+					end
 				end
 
 				TEMPO_BIP: begin
@@ -98,32 +106,56 @@ module setup (
 						if(digitos_value == {20{4'hF}}) estado <= TEMPO_TRC;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
-								reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
+							if((reg_digitos[1]*10 + reg_digitos[0] <= 60) && (reg_digitos[1]*10 + reg_digitos[0] >= 5)) begin
+								reg_data_setup_new.bip_time <= reg_digitos[1]*10 + reg_digitos[0];
 								estado <= TEMPO_TRC;
 							end else begin
-								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.bip_time <= 5;
-								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.bip_time <= 60;
+								if(reg_digitos[1]*10 + reg_digitos[0] < 5) reg_data_setup_new.bip_time <= 5;
+								if(reg_digitos[1]*10 + reg_digitos[0] > 60) reg_data_setup_new.bip_time <= 60;
 								estado <= TEMPO_TRC;
 							end
 						end
-					end else estado <= TEMPO_BIP;
+					end else begin
+						estado <= TEMPO_BIP;
+						if(digitos_value[0] == 4'hF) begin
+							reg_digitos[0] <= reg_data_setup_new.tranca_aut_time % 10;
+							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+						end else if(digitos_value[1] == 4'hF) begin
+							reg_digitos[0] <= digitos_value[0];
+							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+						end else begin
+							reg_digitos[1:0] <= digitos_value[1:0];
+						end
+						
+					end
 				end
 				TEMPO_TRC: begin
 					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_MASTER;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
-								reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
-								estado <= SENHA_MASTER;
+							if((reg_digitos[1]*10 + reg_digitos[0] <= 60) && (reg_digitos[1]*10 + reg_digitos[0] >= 5)) begin
+								reg_data_setup_new.tranca_aut_time <= reg_digitos[1]*10 + reg_digitos[0];
+								estado <= TEMPO_TRC;
 							end else begin
-								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.tranca_aut_time <= 5;
-								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.tranca_aut_time <= 60;
-								estado <= SENHA_MASTER;
+								if(reg_digitos[1]*10 + reg_digitos[0] < 5) reg_data_setup_new.tranca_aut_time <= 5;
+								if(reg_digitos[1]*10 + reg_digitos[0] > 60) reg_data_setup_new.tranca_aut_time <= 60;
+								estado <= TEMPO_TRC;
 							end
 						end
-					end else estado <= TEMPO_TRC;
+					end else begin
+						estado <= TEMPO_BIP;
+						if(digitos_value[0] == 4'hF) begin
+							reg_digitos[0] <= reg_data_setup_new.tranca_aut_time % 10;
+							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+						end else if(digitos_value[1] == 4'hF) begin
+							reg_digitos[0] <= digitos_value[0];
+							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+						end else begin
+							reg_digitos[1:0] <= digitos_value[1:0];
+						end
+						
+					end
 				end
 
 				SENHA_MASTER: begin
@@ -279,8 +311,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = digitos_value[0] % 10;
-					bcd_pac.BCD1 = digitos_value[1] / 10;
+					bcd_pac.BCD0 = reg_digitos[0];
+					bcd_pac.BCD1 = reg_digitos[1];
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
@@ -291,8 +323,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = digitos_value[0] % 10;
-					bcd_pac.BCD1 = digitos_value[1] / 10;
+					bcd_pac.BCD0 = reg_digitos[0];
+					bcd_pac.BCD1 = reg_digitos[1];
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
