@@ -118,11 +118,11 @@ module setup (
 					end else begin
 						estado <= TEMPO_BIP;
 						if(digitos_value[0] == 4'hF) begin
-							reg_digitos[0] <= reg_data_setup_new.tranca_aut_time % 10;
-							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+							reg_digitos[0] <= reg_data_setup_new.bip_time % 10;
+							reg_digitos[1] <= reg_data_setup_new.bip_time / 10;
 						end else if(digitos_value[1] == 4'hF) begin
 							reg_digitos[0] <= digitos_value[0];
-							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
+							reg_digitos[1] <= reg_data_setup_new.bip_time / 10;
 						end else begin
 							reg_digitos[0] <= digitos_value[0];
 							reg_digitos[1] <= digitos_value[1];
@@ -153,7 +153,8 @@ module setup (
 							reg_digitos[0] <= digitos_value[0];
 							reg_digitos[1] <= reg_data_setup_new.tranca_aut_time / 10;
 						end else begin
-							reg_digitos[1:0] <= digitos_value[1:0];
+							reg_digitos[0] <= digitos_value[0];
+							reg_digitos[1] <= digitos_value[1];
 						end
 						
 					end
