@@ -81,7 +81,7 @@ module setup (
 				end*/
 
 				HABILITA_BIP: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= TEMPO_BIP;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -94,7 +94,7 @@ module setup (
 				end
 
 				TEMPO_BIP: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= TEMPO_TRC;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -110,7 +110,7 @@ module setup (
 					end else estado <= TEMPO_BIP;
 				end
 				TEMPO_TRC: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_MASTER;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -127,7 +127,7 @@ module setup (
 				end
 
 				SENHA_MASTER: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_1;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -145,7 +145,7 @@ module setup (
 				end
 
 				SENHA_1: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_2;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -163,7 +163,7 @@ module setup (
 				end
 
 				SENHA_2: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_3;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -181,7 +181,7 @@ module setup (
 				end
 
 				SENHA_3: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_4;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
@@ -199,7 +199,7 @@ module setup (
 				end
 
 				SENHA_4: begin
-					if(digitos_valid) begin
+					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}} || digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value[4] != 4'hF) begin

@@ -21,10 +21,13 @@ module operacional(
 
 	setupPac_t reg_data_setup;
 	bcdPac_t reg_bcd_pac;
+
+	senhaPac_t senha;
 	
 	logic [11:0] cont_np;
 	logic [2:0] cont_tentativas;
 	logic [15:0] cont_bloqueio;
+	logic [15:0] cont_bip;
 
 
 	typedef enum logic [3:0] {
@@ -57,12 +60,23 @@ module operacional(
 		end else begin
 			case(estado)
 				INIT: begin
+					if(sensor_contato) estado <= PORTA_TRANCADA;
 				end
 
 				PORTA_TRANCADA: begin
+					if(botao_interno) estado <= PORTA_ENCOSTADA;
+					else begin
+						if(digitos_valid) begin
+							estado <= VALIDAR_SENHA;
+							senha <= digitos_value;
+						end
+
+					end
 				end
 
 				VALIDAR_SENHA: begin
+
+
 				end
 
 				BLOQUEADO: begin
@@ -78,9 +92,11 @@ module operacional(
 				end
 
 				PORTA_ENCOSTADA: begin
+					if(!sensor_contato) estado <= PORTA_ABERTA;
 				end
 
 				PORTA_ABERTA: begin
+					if(sensor_contato) estado <= PORTA_ENCOSTADA;
 				end
 
 				PORTA_BIPANDO: begin
