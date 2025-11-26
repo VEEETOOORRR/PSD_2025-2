@@ -38,7 +38,7 @@ module setup (
 			reg_data_setup_new.bip_status <= 1;
 			reg_data_setup_new.bip_time <= 5;
 			reg_data_setup_new.tranca_aut_time <= 5;
-			reg_data_setup_new.senha_master <= {16{4'hF}, 4'h1, 4'h2, 4'h3, 4'h4};
+			reg_data_setup_new.senha_master <= {{16{4'hF}}, 4'h1, 4'h2, 4'h3, 4'h4};
 			reg_data_setup_new.senha_1 <= {20{4'hF}};
 			reg_data_setup_new.senha_2 <= {20{4'hF}};
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
