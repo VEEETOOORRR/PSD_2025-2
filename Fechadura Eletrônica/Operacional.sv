@@ -112,36 +112,120 @@ module operacional(
 	always_comb begin
 		case(estado)
 			INIT: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 0;
+				bip = 0;
 			end
 
 			PORTA_TRANCADA: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 1;
+				display_en = 1;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			VALIDAR_SENHA: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			BLOQUEADO: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 1;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			CONT_NP: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			NP: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			BIP_TIMEOUT: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0
+				display_en = 0;
+				setup_on = 0;
+				tranca = 1;
+				bip = 0;
 			end
 
 			PORTA_ENCOSTADA: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 0;
+				bip = 0;
 			end
 
 			PORTA_ABERTA: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 0;
+				bip = 0;
 			end
 
 			PORTA_BIPANDO: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 0;
+				bip = 1;
+			end
+
+			AGUARDA_SENHA_MASTER: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 1;
+				display_en = 1;
+				setup_on = 0;
+				tranca = 
+				bip =
+			end
+
+			VALIDAR_SENHA_MASTER: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 0;
+				display_en = 0;
+				setup_on = 0;
+				tranca = 0;
+				bip = 0;
 			end
 
 			SETUP: begin
+				bcd_pac = reg_bcd_pac;
+				teclado_en = 1;
+				display_en = 0;
+				setup_on = 1;
+				tranca = 0;
+				bip = 0;
 			end
 	
 		endcase
