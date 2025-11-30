@@ -51,45 +51,13 @@ module setup (
 
 				end
 
-				/*ESPERA_SENHA_MASTER: begin 
-
-					if(digitos_value == {20{4'hB}} && digitos_valid) estado <= HABILITA_BIP;
-					else if((digitos_value == reg_data_setup_new.senha_master) && digitos_valid) estado <= HABILITA_BIP;
-					else estado <= ESPERA_SENHA_MASTER;
-
-					senha_input <= digitos_value;
-				end
-
-				VERIFICA_SENHA_MASTER: begin
-					if(senha_input == {20{4'hF}}) begin
-						estado <= ESPERA_SENHA_MASTER;
-					end else begin
-						logic senha_correta = 1;
-						
-						for(int i = 0; i < 20; i++) begin
-							if(reg_data_setup_new.senha_master[i] != 4'hF && 
-							reg_data_setup_new.senha_master[i] != senha_input[i]) begin
-								senha_correta = 0;
-								break;
-							end
-						end
-						
-						if(senha_correta) begin
-							estado <= HABILITA_BIP;
-						end else begin
-							estado <= VERIFICA_SENHA_MASTER;
-							senha_input <= {4'hF, senha_input[19:1]};
-						end
-					end
-				end*/
-
 				HABILITA_BIP: begin
 					if(digitos_valid) begin
 						if(digitos_value == {20{4'hF}}) estado <= TEMPO_BIP;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[0] == 0 || digitos_value[0] == 1) begin
-								reg_data_setup_new.bip_status <= digitos_value[0];
+							if(digitos_value.digits[0] == 0 || digitos_value.digits[0] == 1) begin
+								reg_data_setup_new.bip_status <= digitos_value.digits[0];
 								estado <= TEMPO_BIP;
 							end else begin
 								estado <= HABILITA_BIP;
@@ -106,12 +74,12 @@ module setup (
 							estado <= TEMPO_TRC;
 						end else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
-								reg_data_setup_new.bip_time <= digitos_value[1]*10 + digitos_value[0];
+							if((digitos_value.digits[1]*10 + digitos_value.digits[0] <= 60) && (digitos_value.digits[1]*10 + digitos_value.digits[0] >= 5)) begin
+								reg_data_setup_new.bip_time <= digitos_value.digits[1]*10 + digitos_value.digits[0];
 								estado <= TEMPO_TRC;
 							end else begin
-								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.bip_time <= 5;
-								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.bip_time <= 60;
+								if(digitos_value.digits[1]*10 + digitos_value.digits[0] < 5) reg_data_setup_new.bip_time <= 5;
+								if(digitos_value.digits[1]*10 + digitos_value.digits[0] > 60) reg_data_setup_new.bip_time <= 60;
 								estado <= TEMPO_TRC;
 							end
 						end
@@ -125,12 +93,12 @@ module setup (
 						end
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if((digitos_value[1]*10 + digitos_value[0] <= 60) && (digitos_value[1]*10 + digitos_value[0] >= 5)) begin
-								reg_data_setup_new.tranca_aut_time <= digitos_value[1]*10 + digitos_value[0];
+							if((digitos_value.digits[1]*10 + digitos_value.digits[0] <= 60) && (digitos_value.digits[1]*10 + digitos_value.digits[0] >= 5)) begin
+								reg_data_setup_new.tranca_aut_time <= digitos_value.digits[1]*10 + digitos_value.digits[0];
 								estado <= SENHA_MASTER;
 							end else begin
-								if(digitos_value[1]*10 + digitos_value[0] < 5) reg_data_setup_new.tranca_aut_time <= 5;
-								if(digitos_value[1]*10 + digitos_value[0] > 60) reg_data_setup_new.tranca_aut_time <= 60;
+								if(digitos_value.digits[1]*10 + digitos_value.digits[0] < 5) reg_data_setup_new.tranca_aut_time <= 5;
+								if(digitos_value.digits[1]*10 + digitos_value.digits[0] > 60) reg_data_setup_new.tranca_aut_time <= 60;
 								estado <= SENHA_MASTER;
 							end
 						end
@@ -144,31 +112,20 @@ module setup (
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_1;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[4] != 4'hF) begin
-								for (int i = 0; i < 12; i++) begin
-									reg_data_setup_new.senha_master.digits[i] <= digitos_value.digits[i];
-								end
-								for (int i = 12; i < 20; i++) begin
-									reg_data_setup_new.senha_master.digits[i] <= 4'hF;
-								end
+							if(digitos_value.digits[3] != 4'hF) begin
+								reg_data_setup_new.senha_master.digits[11:0] <= digitos_value.digits[11:0];
 								estado <= SENHA_1;
 							end
 						end
 					end else estado <= SENHA_MASTER;
 				end
-
 				SENHA_1: begin
 					if(digitos_valid && digitos_value != {20{4'hE}}) begin
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_2;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[4] != 4'hF) begin
-								for (int i = 0; i < 12; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
-								end
-								for (int i = 12; i < 20; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
-								end
+							if(digitos_value.digits[3] != 4'hF) begin
+								reg_data_setup_new.senha_1.digits[11:0] <= digitos_value.digits[11:0];
 								estado <= SENHA_2;
 							end
 						end
@@ -180,13 +137,8 @@ module setup (
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_3;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[4] != 4'hF) begin
-								for (int i = 0; i < 12; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
-								end
-								for (int i = 12; i < 20; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
-								end
+							if(digitos_value.digits[3] != 4'hF) begin
+								reg_data_setup_new.senha_2.digits[11:0] <= digitos_value.digits[11:0];
 								estado <= SENHA_3;
 							end
 						end
@@ -198,13 +150,8 @@ module setup (
 						if(digitos_value == {20{4'hF}}) estado <= SENHA_4;
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[4] != 4'hF) begin
-								for (int i = 0; i < 12; i++) begin 
-									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
-								end
-								for (int i = 12; i < 20; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
-								end
+							if(digitos_value.digits[3] != 4'hF) begin
+								reg_data_setup_new.senha_3.digits[11:0] <= digitos_value.digits[11:0];
 								estado <= SENHA_4;
 							end
 						end
@@ -213,15 +160,11 @@ module setup (
 
 				SENHA_4: begin
 					if(digitos_valid && digitos_value != {20{4'hE}}) begin
-						if(digitos_value == {20{4'hF}} || digitos_value == {20{4'hB}}) estado <= SAVE;
+						if(digitos_value == {20{4'hF}}) estado <= SAVE;
+						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
-							if(digitos_value[4] != 4'hF) begin
-								for (int i = 0; i < 12; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= digitos_value.digits[i];
-								end
-								for (int i = 12; i < 20; i++) begin
-									reg_data_setup_new.senha_1.digits[i] <= 4'hF;
-								end
+							if(digitos_value.digits[3] != 4'hF) begin
+								reg_data_setup_new.senha_4.digits[11:0] <= digitos_value.digits[11:0];
 								estado <= SAVE;
 							end
 						end
@@ -279,8 +222,8 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = digitos_value[0];
-					bcd_pac.BCD1 = digitos_value[1];
+					bcd_pac.BCD0 = digitos_value.digits[0];
+					bcd_pac.BCD1 = digitos_value.digits[1];
 					bcd_pac.BCD2 = 4'hF;
 					bcd_pac.BCD3 = 4'hF;
 					bcd_pac.BCD4 = 4'hF;
