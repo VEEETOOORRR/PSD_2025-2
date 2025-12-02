@@ -49,6 +49,7 @@ module operacional(
 
     // CONSTANTES 
     parameter DEBOUNCE_BUTTON = 100;                            // 100 ms
+    parameter DEBOUNCE_NAO_PERTURBE = 3000;                     // 3s
     parameter INTERVAL_BETWEEN_READINGS = 1000;                 // 1s
     parameter TIME_BLOCKED = 30000;                             // 30s
     parameter TIME_CLOSE_DOOR_AUTO = 5000;                      // 5s
@@ -68,15 +69,17 @@ module operacional(
     logic senha_valid_in, senha_ok, senha_done;                 // sinais para se comunicar com o verifica_senha
     senhaPac_t senha_teste, senha_real;                         // sinais para se comunicar com o verifica_senha
 
+    logic [2:0] cont_senhas;                                    // registrador para armazenar quantas senhas foram testadas
+    logic reg_np;                                               // registrador para armazenar estado do não perturbe
 
     verifica_senha vs(                                          // submódulo que realiza a verificação da senha
-        .clk(clk),
-        .rst(rst),
-        .valid_in(senha_valid_in),
-        .senha_teste(senha_teste),
-        .senha_real(senha_real),
-        .senha_ok(senha_ok),
-        .done(senha_done)
+        .clk(clk), //input
+        .rst(rst), //input
+        .valid_in(senha_valid_in), //input
+        .senha_teste(senha_teste), //input
+        .senha_real(senha_real), //input
+        .senha_ok(senha_ok), //output
+        .done(senha_done) //output
     );
 
     always_ff @(posedge clk or posedge rst) begin
@@ -105,6 +108,12 @@ module operacional(
 			reg_data_setup.senha_3 <= {20{4'hF}};
 			reg_data_setup.senha_4 <= {20{4'hF}};
 
+            senha_valid_in <= 0;
+            senha_teste <= {20{4'hF}};
+            senha_real <= {20{4'hF}};
+
+            reg_np <= 0;
+
         end
 
         else begin
@@ -122,13 +131,8 @@ module operacional(
 
                 PORTA_FECHADA: begin
 
-                    // Entrada inválida - timeout do teclado
-                    if (digitos_valid == 1 && (digitos_value.digits[0] == 4'hE)) begin
-                        estado <= BIP_TIMEOUT;
-                    end
-
                     // Botão de bloqueio para desativar entrada pelo teclado
-                    else if (botao_bloqueio) begin
+                    if (botao_bloqueio) begin
                         cont_db_np <= 0;
                         estado <= DEBOUNCE_NP;
                     end
@@ -139,16 +143,23 @@ module operacional(
                         cont_db_dtrc <= 0;
                     end
 
-                    // Entrada válida - verificar
-                    else if (digitos_valid == 1 && ((digitos_value.digits[0] != 4'hE) && (digitos_value.digits[0] != 4'hB))) begin
-                        estado <= VALIDAR_SENHA;
+                    if(!reg_np) begin
+                        // Entrada inválida - timeout do teclado
+                        if (digitos_valid == 1 && (digitos_value.digits[0] == 4'hE)) begin
+                            estado <= BIP_TIMEOUT;
+                        end
+
+                        // Entrada válida - verificar
+                        else if (digitos_valid == 1 && ((digitos_value.digits[0] != 4'hE) && (digitos_value.digits[0] != 4'hB))) begin
+                            estado <= VALIDAR_SENHA;
+                        end
                     end
                 end
 
                 PORTA_ESCORADA: begin
 
                     // Se a porta estiver escorada e o sensor de contato desativado - a porta será aberta
-                    if (sensor_contato) begin   
+                    if (sensor_contato) begin
                         estado <= PORTA_ABERTA;
                     end
 
@@ -226,6 +237,12 @@ module operacional(
 
                 VALIDAR_SENHA_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
+                    if(senha_done) begin
+                        if(senha_ok) estado <= PORTA_ESCORADA;
+                        else begin
+                            estado <= VALIDAR_SENHA;
+                        end
+                    end
                 end
 
                 VALIDAR_SENHA_MASTER: begin
@@ -278,8 +295,9 @@ module operacional(
 
                 DEBOUNCE_DTRC: begin
                     // Vence o debounce de destrancamento
-                    if (cont_db_dtrc >= DEBOUNCE_BUTTON) begin
+                    if (cont_db_dtrc >= DEBOUNCE_BUTTON && (!botao_interno)) begin
                         estado <= PORTA_ESCORADA;
+                        reg_np <= 0;
                         cont_db_dtrc <= 0;
                     end 
                     
@@ -290,7 +308,7 @@ module operacional(
 
                     // Incrementa contador de debounce
                     else begin
-                        cont_db_dtrc <= cont_db_dtrc + 1;
+                        if(cont_db_dtrc <= DEBOUNCE_BUTTON) cont_db_dtrc <= cont_db_dtrc + 1; 
                     end
                 end
 
@@ -313,7 +331,7 @@ module operacional(
 
                 DEBOUNCE_NP: begin
                     // Vence o debounce para entrar no não perturbe
-                    if (cont_db_np >= DEBOUNCE_NP) begin
+                    if (cont_db_np >= DEBOUNCE_NAO_PERTURBE) begin
                         estado <= NAO_PERTURBE;
                         cont_db_np <= 0;
                     end
@@ -340,25 +358,12 @@ module operacional(
                     // ?
                     else if (!sensor_contato) begin
                         estado <= PORTA_FECHADA;
-                        // close_door_cont <= 0;
                     end
-
-                    // Se o contador do tempo de bip for maior que o armazenado, BIPAR porta aberta
-                    else if (cont_bip_time >= data_setup_new.bip_time) begin
-                        estado <= BIP_PORTA_O;
-                    end
-
-                    // Mantém no porta aberta
-                    else begin
-                        estado <= PORTA_ABERTA;
-                    end
-
-                    // Incrementa o contador do tempo do bip
-                    cont_bip_time <= cont_bip_time + 1;
                 end
 
                 NAO_PERTURBE: begin
                     estado <= PORTA_FECHADA;
+                    reg_np <= 1;
                 end
 
                 default: begin
@@ -408,7 +413,8 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    if (reg_np) teclado_en = 1;
+                    else teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -468,7 +474,7 @@ module operacional(
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
-                    bip = 0;*/
+                    bip = 0;
                 end
 
                 VALIDAR_SENHA: begin
@@ -668,4 +674,4 @@ module operacional(
 
     end
 
-endmodule: operacional
+endmodule
