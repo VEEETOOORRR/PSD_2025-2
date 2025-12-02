@@ -1,21 +1,20 @@
-module reset (
-    input logic clk,
-    input logic botao_rst,
-    output logic rst_db
-);
+module resetHold5s #(parameter TIME_TO_RST = 5)(
+    input logic clk, reset_in,
+    output logic reset_out);
 
-    logic [12:0] cont;
+
+    logic [19:0] cont;
 
     always_ff @(posedge clk) begin
-        if(botao_rst) begin
-            if(cont <= 5000) cont <= cont + 1;
-        end else cont <= 0;
+        if(reset_in) begin
+            if(cont <= TIME_TO_RST*1000) cont <= cont + 1;
+        end else cont <= 0; 
 
     end
 
     always_comb begin
-        if(cont == 5000) rst_db = 1;
-        else rst_db = 0;
+        if(cont >= TIME_TO_RST*1000) reset_out = 1;
+        else reset_out = 0;
     end
 
 

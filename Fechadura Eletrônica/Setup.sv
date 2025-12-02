@@ -186,12 +186,12 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 0;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
-					bcd_pac.BCD5 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
 				end
 
 				HABILITA_BIP: begin
@@ -199,10 +199,10 @@ module setup (
 					data_setup_ok = 0;
 					display_en = 1;
                     bcd_pac.BCD0 = digitos_value.digits[0];
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h1;
 				end
 
@@ -212,9 +212,9 @@ module setup (
 					display_en = 1;
                 	bcd_pac.BCD0 = digitos_value.digits[0];
                 	bcd_pac.BCD1 = digitos_value.digits[1];
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h2;
 				end
 
@@ -224,9 +224,9 @@ module setup (
 					display_en = 1;
 					bcd_pac.BCD0 = digitos_value.digits[0];
 					bcd_pac.BCD1 = digitos_value.digits[1];
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h3;
 				end
 
@@ -234,11 +234,11 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h4;
 				end
 
@@ -246,11 +246,11 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h5;
 				end
 
@@ -258,11 +258,11 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h6;
 				end
 
@@ -270,11 +270,11 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h7;
 				end
 
@@ -282,11 +282,11 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 0;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'h8;
 				end
 
@@ -294,12 +294,12 @@ module setup (
 					data_setup_new = reg_data_setup_new;
 					data_setup_ok = 1;
 					display_en = 1;
-					bcd_pac.BCD0 = 4'hF;
-					bcd_pac.BCD1 = 4'hF;
-					bcd_pac.BCD2 = 4'hF;
-					bcd_pac.BCD3 = 4'hF;
-					bcd_pac.BCD4 = 4'hF;
-					bcd_pac.BCD5 = 4'hF;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
 				end
 			endcase
 		
