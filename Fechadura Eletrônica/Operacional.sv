@@ -217,9 +217,10 @@ module operacional(
                 end
 
                 VALIDAR_SENHA: begin
+
                     // Validar senhas 1, 2, 3, 4
                     // Se correto jogar para o estado PORTA_ESCORADA
-
+                    estado <= VALIDAR_SENHA_WAIT;
                     // Se errado jogar para o estado SENHA_ERROR 
                 end
 
@@ -387,7 +388,12 @@ module operacional(
             case(estado)
 
                 INIT: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -396,7 +402,12 @@ module operacional(
                 end
 
                 PORTA_FECHADA: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
@@ -405,7 +416,12 @@ module operacional(
                 end
 
                 PORTA_ESCORADA: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -414,7 +430,12 @@ module operacional(
                 end
 
                 PORTA_ABERTA: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -423,7 +444,12 @@ module operacional(
                 end
 
                 SETUP: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 0; // Quem manda no display nesse estado é o módulo setup.
                     setup_on = 1;
@@ -432,7 +458,12 @@ module operacional(
                 end
 
                 PRE_SETUP: begin
-                    bcd_pac = 'hBBBBBB;     
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;   
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -441,7 +472,12 @@ module operacional(
                 end
 
                 VALIDAR_SENHA: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
@@ -450,7 +486,12 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
@@ -461,19 +502,44 @@ module operacional(
                 SENHA_ERROR: begin
                     case (number_of_attempts)
                         1: begin
-                            bcd_pac = 'hBBBBBA;
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hB;
+                            bcd_pac.BCD2 = 4'hB;
+                            bcd_pac.BCD3 = 4'hB;
+                            bcd_pac.BCD4 = 4'hB;
+                            bcd_pac.BCD5 = 4'hB;
                         end
                         2: begin
-                            bcd_pac = 'hBBBBAA;
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hB;
+                            bcd_pac.BCD3 = 4'hB;
+                            bcd_pac.BCD4 = 4'hB;
+                            bcd_pac.BCD5 = 4'hB;
                         end
                         3: begin
-                            bcd_pac = 'hBBBAAA;
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hA;
+                            bcd_pac.BCD3 = 4'hB;
+                            bcd_pac.BCD4 = 4'hB;
+                            bcd_pac.BCD5 = 4'hB;
                         end
                         4: begin
-                            bcd_pac = 'hBBAAAA;
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hA;
+                            bcd_pac.BCD3 = 4'hA;
+                            bcd_pac.BCD4 = 4'hB;
+                            bcd_pac.BCD5 = 4'hB;
                         end
                         5: begin
-                            bcd_pac = 'hBAAAAA;
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hA;
+                            bcd_pac.BCD3 = 4'hA;
+                            bcd_pac.BCD4 = 4'hA;
+                            bcd_pac.BCD5 = 4'hA;
                         end
                     endcase
 
@@ -485,7 +551,12 @@ module operacional(
                 end
 
                 BLOQUEIO: begin
-                    bcd_pac = 'hBAAAAA;
+					bcd_pac.BCD0 = 4'hA;
+					bcd_pac.BCD1 = 4'hA;
+					bcd_pac.BCD2 = 4'hA;
+					bcd_pac.BCD3 = 4'hA;
+					bcd_pac.BCD4 = 4'hA;
+					bcd_pac.BCD5 = 4'hA;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -494,7 +565,12 @@ module operacional(
                 end
 
                 DEBOUNCE_DTRC: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -503,7 +579,12 @@ module operacional(
                 end
 
                 DEBOUNCE_TRC: begin
-                    bcd_pac = 'hBBBBBB;     
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;    
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -512,7 +593,12 @@ module operacional(
                 end
 
                 DEBOUNCE_NP: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -521,7 +607,12 @@ module operacional(
                 end
 
                 BIP_TIMEOUT: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -530,7 +621,12 @@ module operacional(
                 end
 
                 BIP_PORTA_O: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -539,7 +635,12 @@ module operacional(
                 end
 
                 NAO_PERTURBE: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 0;
                     setup_on = 0;
@@ -548,7 +649,12 @@ module operacional(
                 end
 
                 default: begin
-                    bcd_pac = 'hBBBBBB;
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
