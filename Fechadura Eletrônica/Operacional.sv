@@ -147,6 +147,7 @@ module operacional(
                     if(!reg_np) begin
                         // Entrada inválida - timeout do teclado
                         if (digitos_valid == 1 && (digitos_value.digits[0] == 4'hE)) begin
+                            if(reg_data_setup.bip_status)
                             estado <= BIP_TIMEOUT;
                         end
 
