@@ -58,7 +58,8 @@ module operacional(
     logic [2:0] number_of_attempts;                             // Número de tentativas de senha (abrir porta) - 5 tentativas
     logic [14:0] close_door_cont;                               // Contagem de tempo para fechar/bipar a porta - 5s - 5000
     logic [14:0] block_cont;                                    // Contagem de tempo para block - 30s - 30000
-    logic [12:0] cont_bip_time;                                 // Contagem para BIPAR a porta
+    logic [15:0] cont_bip_time;                                 // Contagem para BIPAR a porta
+    logic [15:0] cont_tranca_aut;                               // Contagem para trancar a porta automaticamente
     logic [6:0] cont_db_np;                                     // Contagem debounce não perturbe - 100ms
     logic [6:0] cont_db_dtrc;                                   // Contagem debounce destrancar lingueta - 100ms
     logic [6:0] cont_db_trc;                                    // Contagem debounce trancar lingueta - 100ms
@@ -94,6 +95,7 @@ module operacional(
             close_door_cont <= 0;
             block_cont <= 0;
             cont_bip_time <= 0;
+            cont_tranca_aut <= 0;
             cont_db_np <= 0;
             cont_db_dtrc <= 0;
             cont_db_trc <= 0;
@@ -123,7 +125,6 @@ module operacional(
                 INIT: begin
                     if (!sensor_contato) begin
                         estado <= PORTA_FECHADA;
-                        number_of_attempts <= 0;
                     end else begin
                         estado <= INIT;
                     end
@@ -168,9 +169,17 @@ module operacional(
                         estado <= DEBOUNCE_TRC;
                     end
 
+                    // Se a porta estiver escorada e passar do tempo de trancamento automático
+                    else if(cont_tranca_aut <= reg_data_setup.tranca_aut_time * 1000) begin
+                        estado <= PORTA_FECHADA;
+                    end
+
                     // Mantém na porta escorada se n tiver nenhum estimulo
                     else begin
                         estado <= PORTA_ESCORADA;
+                        if(cont_tranca_aut <= reg_data_setup.tranca_aut_time * 1000) begin
+                            cont_tranca_aut <= cont_tranca_aut + 1;
+                        end
                     end
                 end
 
@@ -182,14 +191,14 @@ module operacional(
                         cont_db_setup <= 0;
                     end 
                     
-                    // ?
+                    // caso feche a porta
                     else if (!sensor_contato) begin
                         estado <= PORTA_ESCORADA;
-                        // close_door_cont <= 0;
+                        cont_tranca_aut <= 0;
                     end
 
                     // Se o contador do tempo de bip for maior que o armazenado, BIPAR porta aberta
-                    else if (cont_bip_time >= data_setup_new.bip_time) begin
+                    else if ((reg_data_setup.bip_status) && (cont_bip_time >= data_setup_new.bip_time)) begin
                         estado <= BIP_PORTA_O;
                     end
 
@@ -199,7 +208,7 @@ module operacional(
                     end
 
                     // Incrementa o contador do tempo do bip
-                    cont_bip_time <= cont_bip_time + 1;
+                    if(reg_data_setup.bip_status) cont_bip_time <= cont_bip_time + 1;
                 end
 
                 SETUP: begin
@@ -299,6 +308,7 @@ module operacional(
                         estado <= PORTA_ESCORADA;
                         reg_np <= 0;
                         cont_db_dtrc <= 0;
+                        cont_tranca_aut <= 0;
                     end 
                     
                     // Botao interno abrir/fechar
@@ -331,13 +341,13 @@ module operacional(
 
                 DEBOUNCE_NP: begin
                     // Vence o debounce para entrar no não perturbe
-                    if (cont_db_np >= DEBOUNCE_NAO_PERTURBE) begin
+                    if ((!botao_bloqueio) && (cont_db_np >= DEBOUNCE_NAO_PERTURBE)) begin
                         estado <= NAO_PERTURBE;
                         cont_db_np <= 0;
                     end
 
                     else if (botao_bloqueio) begin
-                        cont_db_np <= cont_db_np + 1;
+                        if(cont_db_np <= DEBOUNCE_NAO_PERTURBE) cont_db_np <= cont_db_np + 1;
                     end
 
                     else estado <= PORTA_FECHADA;
