@@ -20,27 +20,27 @@ module verifica_senha(
         INCORRETA,
         CORRETA
 
-    } estado_vs;
+    } estado_t;
 
-    estado_vs estado_s;
+    estado_t estado;
     logic [4:0] size_senha, pulse_value;
 
     always_ff @(posedge clk or posedge rst) begin
 
         if (rst) begin
-            estado_s <= IDLE_SENHA;
+            estado <= IDLE_SENHA;
             size_senha <= 0;
             pulse_value <= 0;
         end
 
         else begin
-            case(estado_s)
+            case(estado)
 
                 IDLE_SENHA: begin
                     if (valid_in) begin
-                        estado_s <= DIMENSAO;
+                        estado <= DIMENSAO;
                     end else begin 
-                        estado_s <= IDLE_SENHA;
+                        estado <= IDLE_SENHA;
                     end
                     
                 end
@@ -48,7 +48,7 @@ module verifica_senha(
                 DIMENSAO: begin
 
                     // Estado para descobrir o tamanho da senha
-                    if ((senha_real.digits[3] == 4'hF) || (senha_real.digits == {20{4'hF}})) estado_s <= INCORRETA // senha invalida
+                    if ((senha_real.digits[3] == 4'hF) || (senha_real.digits == {20{4'hF}})) estado <= INCORRETA; // senha invalida
                     else begin
                         if      (senha_real.digits[4]  == 4'hF) size_senha <= 4;
                         else if (senha_real.digits[5]  == 4'hF) size_senha <= 5;
@@ -59,7 +59,7 @@ module verifica_senha(
                         else if (senha_real.digits[10] == 4'hF) size_senha <= 10;
                         else if (senha_real.digits[11] == 4'hF) size_senha <= 11;
                         else if (senha_real.digits[12] == 4'hF) size_senha <= 12;
-                        estado_s <= VALIDANDO_SENHA;
+                        estado <= VALIDANDO_SENHA;
                     end
 
                 end
@@ -72,7 +72,7 @@ module verifica_senha(
                             senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
                             senha_real.digits[3] == senha_teste.digits[pulse_value+3]
                         ) begin
-                            estado_s <= CORRETA;                            
+                            estado <= CORRETA;                            
                         end 
                         else begin
                             pulse_value <= pulse_value + 1;
@@ -87,7 +87,7 @@ module verifica_senha(
                             senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
                             senha_real.digits[4] == senha_teste.digits[pulse_value+4]                       
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end else begin
                             pulse_value <= pulse_value + 1;
                         end
@@ -103,7 +103,7 @@ module verifica_senha(
                             senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
                             senha_real.digits[5] == senha_teste.digits[pulse_value+5]                
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
 
                         else begin
@@ -122,7 +122,7 @@ module verifica_senha(
                             senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
                             senha_real.digits[6] == senha_teste.digits[pulse_value+6]
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
 
                         else begin
@@ -142,7 +142,7 @@ module verifica_senha(
                             senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
                             senha_real.digits[7] == senha_teste.digits[pulse_value+7] 
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
                         else begin
                             pulse_value <= pulse_value + 1;
@@ -162,7 +162,7 @@ module verifica_senha(
                             senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
                             senha_real.digits[8] == senha_teste.digits[pulse_value+8]
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
                         else begin
                             pulse_value <= pulse_value + 1;
@@ -183,7 +183,7 @@ module verifica_senha(
                             senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
                             senha_real.digits[9] == senha_teste.digits[pulse_value+9]
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
                         else begin
                             pulse_value <= pulse_value + 1;
@@ -205,7 +205,7 @@ module verifica_senha(
                             senha_real.digits[9] == senha_teste.digits[pulse_value+9] &&
                             senha_real.digits[10] == senha_teste.digits[pulse_value+10]
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
                         else begin
                             pulse_value <= pulse_value + 1;
@@ -228,7 +228,7 @@ module verifica_senha(
                             senha_real.digits[10] == senha_teste.digits[pulse_value+10] &&
                             senha_real.digits[11] == senha_teste.digits[pulse_value+11]
                         ) begin
-                            estado_s <= CORRETA;
+                            estado <= CORRETA;
                         end
                         else begin
                             pulse_value <= pulse_value + 1;

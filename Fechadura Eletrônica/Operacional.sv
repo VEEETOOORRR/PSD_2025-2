@@ -33,6 +33,7 @@ module operacional(
         VALIDAR_SENHA,                                          // Inicializa verifica_senha com um pulso em senha_valid_in
         VALIDAR_SENHA_WAIT,                                     // Aguarda retorno do verifica_senha
         VALIDAR_SENHA_MASTER,                                   // Inicializa verifica_senha com um pulso em senha_valid_in
+        VALIDAR_SENHA_MASTER_IDLE,                              // Aguarda alguma senha ser digitada antes de mandar verificar
         VALIDAR_SENHA_MASTER_WAIT,                              // Aguarda retorno do verifica_senha
         SENHA_ERROR,                                            // Conta a quantidade de tentativas de senha
         BLOQUEIO,                                               // Deixa o sistema inoperante por 30s
@@ -227,7 +228,7 @@ module operacional(
                 PRE_SETUP: begin
                     // Se vencer o debounce do botao config
                     if (cont_db_setup >= DEBOUNCE_BUTTON) begin
-                        estado <= VALIDAR_SENHA_MASTER;
+                        estado <= VALIDAR_SENHA_MASTER_IDLE;
                         cont_db_setup <= 0;
                     end
 
@@ -272,6 +273,10 @@ module operacional(
 
                     // Se quiser sair digitar o botão no teclado - ESTADO ABERTA
 
+                end
+
+                VALIDAR_SENHA_MASTER_IDLE: begin
+                    if(digitos_valid && digitos_value != {})
                 end
 
                 VALIDAR_SENHA_MASTER_WAIT: begin
@@ -582,6 +587,24 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER: begin
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 1;
+                    bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
+                end
+
+                VALIDAR_SENHA_MASTER_IDLE: begin
 					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
