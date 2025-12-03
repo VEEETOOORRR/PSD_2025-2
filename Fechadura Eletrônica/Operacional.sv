@@ -424,6 +424,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 PORTA_FECHADA: begin
@@ -439,6 +443,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 PORTA_ESCORADA: begin
@@ -453,6 +461,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 PORTA_ABERTA: begin
@@ -467,6 +479,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 SETUP: begin
@@ -481,6 +497,10 @@ module operacional(
                     setup_on = 1;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 PRE_SETUP: begin
@@ -495,6 +515,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 VALIDAR_SENHA: begin
@@ -537,8 +561,6 @@ module operacional(
                             senha_real = {20{4'hF}};
                         end
                     endcase
-                    senha_teste = 
-                    senha_real = 
                 end
 
                 VALIDAR_SENHA_WAIT: begin
@@ -553,6 +575,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 VALIDAR_SENHA_MASTER: begin
@@ -567,6 +593,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 VALIDAR_SENHA_MASTER_WAIT: begin
@@ -581,6 +611,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 SENHA_ERROR: begin
@@ -632,6 +666,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 BLOQUEIO: begin
@@ -646,6 +684,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 DEBOUNCE_DTRC: begin
@@ -660,6 +702,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 DEBOUNCE_TRC: begin
@@ -674,6 +720,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 DEBOUNCE_NP: begin
@@ -688,6 +738,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 BIP_TIMEOUT: begin
@@ -702,6 +756,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 1;
+                    
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 BIP_PORTA_O: begin
@@ -716,6 +774,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 1;
+                    
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 NAO_PERTURBE: begin
@@ -730,6 +792,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+                    
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 default: begin
@@ -744,6 +810,10 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
+                    
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
             endcase
