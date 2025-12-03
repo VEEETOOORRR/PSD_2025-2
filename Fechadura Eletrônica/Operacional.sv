@@ -64,13 +64,13 @@ module operacional(
     logic [6:0] cont_db_dtrc;                                   // Contagem debounce destrancar lingueta - 100ms
     logic [6:0] cont_db_trc;                                    // Contagem debounce trancar lingueta - 100ms
     logic [6:0] cont_db_setup;                                  // Contagem debounce setup - 100ms
+    logic [2:0] cont_senhas;                                    // registrador para armazenar quantas senhas foram testadas
 
 	setupPac_t reg_data_setup;                                  // registrador pra guardar os dados de configuração da fechadura
 
     logic senha_valid_in, senha_ok, senha_done;                 // sinais para se comunicar com o verifica_senha
-    senhaPac_t senha_teste, senha_real;                         // sinais para se comunicar com o verifica_senha
+    senhaPac_t senha_teste, senha_real, senha_digitada;         // sinais para se comunicar com o verifica_senha
 
-    logic [2:0] cont_senhas;                                    // registrador para armazenar quantas senhas foram testadas
     logic reg_np;                                               // registrador para armazenar estado do não perturbe
 
     verifica_senha vs(                                          // submódulo que realiza a verificação da senha
@@ -100,6 +100,7 @@ module operacional(
             cont_db_dtrc <= 0;
             cont_db_trc <= 0;
             cont_db_setup <= 0;
+            cont_senhas <= 0;
 
 			reg_data_setup.bip_status <= 1;
 			reg_data_setup.bip_time <= 5;
@@ -113,6 +114,7 @@ module operacional(
             senha_valid_in <= 0;
             senha_teste <= {20{4'hF}};
             senha_real <= {20{4'hF}};
+            senha_digitada <= {20{4'hF}};
 
             reg_np <= 0;
 
@@ -153,6 +155,7 @@ module operacional(
 
                         // Entrada válida - verificar
                         else if (digitos_valid == 1 && ((digitos_value.digits[0] != 4'hE) && (digitos_value.digits[0] != 4'hB))) begin
+                            senha_digitada <= {{8{4'hF}}, digitos_value[11:0]};
                             estado <= VALIDAR_SENHA;
                         end
                     end
@@ -241,7 +244,11 @@ module operacional(
 
                     // Validar senhas 1, 2, 3, 4
                     // Se correto jogar para o estado PORTA_ESCORADA
-                    estado <= VALIDAR_SENHA_WAIT;
+                    if(cont_senhas <= 3) begin
+                        estado <= VALIDAR_SENHA_WAIT;
+                    end else begin
+                        estado <= SENHA_ERROR;
+                    end
                     // Se errado jogar para o estado SENHA_ERROR 
                 end
 
@@ -251,6 +258,7 @@ module operacional(
                         if(senha_ok) estado <= PORTA_ESCORADA;
                         else begin
                             estado <= VALIDAR_SENHA;
+                            cont_senhas <= cont_senhas + 1;
                         end
                     end
                 end
@@ -258,6 +266,7 @@ module operacional(
                 VALIDAR_SENHA_MASTER: begin
                     // Validar senha master com digitos_value e valid
                     // Se ocorrer tudo certo, - ESTADO DE SETUP
+                    estado <= VALIDAR_SENHA_MASTER_WAIT;
 
                     // Se errar - se mantem nesse estado
 
@@ -266,13 +275,13 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER_WAIT: begin
-                    // Validar senha master com digitos_value e valid
-                    // Se ocorrer tudo certo, - ESTADO DE SETUP
-
-                    // Se errar - se mantem nesse estado
-
-                    // Se quiser sair digitar o botão no teclado - ESTADO ABERTA
-
+                    // Aguarda o verifica_senha retornar algum resultado.
+                    if(senha_done) begin
+                        if(senha_ok) estado <= SETUP;
+                        else begin
+                            estado <= VALIDAR_SENHA_MASTER;
+                        end
+                    end
                 end
 
                 SENHA_ERROR: begin
@@ -495,7 +504,51 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 1;
+                    bip = 0;
+
+                    case(cont_senhas)
+                        0: begin
+                            senha_valid_in = 1;
+                            senha_teste = reg_data_setup.senha_1;
+                            senha_real = senha_digitada;
+                        end
+                        1: begin
+                            senha_valid_in = 1;
+                            senha_teste = reg_data_setup.senha_2;
+                            senha_real = senha_digitada;
+                        end
+                        2: begin
+                            senha_valid_in = 1;
+                            senha_teste = reg_data_setup.senha_3;
+                            senha_real = senha_digitada;
+                        end
+                        3: begin
+                            senha_valid_in = 1;
+                            senha_teste = reg_data_setup.senha_4;
+                            senha_real = senha_digitada;
+                        end
+                        default: begin // se cont_senhas chegar a 4, significa que todas as senhas foram testadas e nenhuma passou.
+                            senha_valid_in = 0;
+                            senha_teste = {20{4'hF}};
+                            senha_real = {20{4'hF}};
+                        end
+                    endcase
+                    senha_teste = 
+                    senha_real = 
+                end
+
+                VALIDAR_SENHA_WAIT: begin
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
+                    teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -509,7 +562,21 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 1;
+                    bip = 0;
+                end
+
+                VALIDAR_SENHA_MASTER_WAIT: begin
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'hB;
+                    teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
