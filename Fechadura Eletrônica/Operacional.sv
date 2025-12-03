@@ -112,9 +112,6 @@ module operacional(
 			reg_data_setup.senha_3 <= {20{4'hF}};
 			reg_data_setup.senha_4 <= {20{4'hF}};
 
-            senha_valid_in <= 0;
-            senha_teste <= {20{4'hF}};
-            senha_real <= {20{4'hF}};
             senha_digitada <= {20{4'hF}};
 
             reg_np <= 0;
@@ -276,7 +273,9 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER_IDLE: begin
-                    if(digitos_valid && digitos_value != {})
+                    if(digitos_valid) begin
+                        if(digitos_value)
+                    end
                 end
 
                 VALIDAR_SENHA_MASTER_WAIT: begin
