@@ -48,20 +48,19 @@ module verifica_senha(
                 DIMENSAO: begin
 
                     // Estado para descobrir o tamanho da senha
-                    if      (senha_real.digits[4]  == 4'hF) size_senha <= 4;
-                    else if (senha_real.digits[5]  == 4'hF) size_senha <= 5;
-                    else if (senha_real.digits[6]  == 4'hF) size_senha <= 6;
-                    else if (senha_real.digits[7]  == 4'hF) size_senha <= 7;
-                    else if (senha_real.digits[8]  == 4'hF) size_senha <= 8;
-                    else if (senha_real.digits[9]  == 4'hF) size_senha <= 9;
-                    else if (senha_real.digits[10] == 4'hF) size_senha <= 10;
-                    else if (senha_real.digits[11] == 4'hF) size_senha <= 11;
-                    else if (senha_real.digits[12] == 4'hF) size_senha <= 12;
+                    if ((senha_real.digits[3] == 4'hF) || (senha_real.digits == {20{4'hF}})) estado_s <= INCORRETA // senha invalida
                     else begin
-                        
-                        estado_s <= INCORRETA; // senha real inválida
+                        if      (senha_real.digits[4]  == 4'hF) size_senha <= 4;
+                        else if (senha_real.digits[5]  == 4'hF) size_senha <= 5;
+                        else if (senha_real.digits[6]  == 4'hF) size_senha <= 6;
+                        else if (senha_real.digits[7]  == 4'hF) size_senha <= 7;
+                        else if (senha_real.digits[8]  == 4'hF) size_senha <= 8;
+                        else if (senha_real.digits[9]  == 4'hF) size_senha <= 9;
+                        else if (senha_real.digits[10] == 4'hF) size_senha <= 10;
+                        else if (senha_real.digits[11] == 4'hF) size_senha <= 11;
+                        else if (senha_real.digits[12] == 4'hF) size_senha <= 12;
+                        estado_s <= VALIDANDO_SENHA;
                     end
-                    estado_s <= VALIDANDO_SENHA;
 
                 end
 
