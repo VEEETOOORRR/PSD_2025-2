@@ -274,7 +274,15 @@ module operacional(
 
                 VALIDAR_SENHA_MASTER_IDLE: begin
                     if(digitos_valid) begin
-                        if(digitos_value)
+                        if(digitos_value == {20{4'hB}}) begin // digita # para sair do senha_master
+                            estado <= PORTA_ABERTA;
+                        end else if(digitos_value == {20{4'hE}}) begin
+                            estado <= VALIDAR_SENHA_MASTER_IDLE;
+                        end else begin
+                            estado <= VALIDAR_SENHA_MASTER;
+                            senha_digitada <= {{8{4'hF}}, digitos_value[11:0]};
+                        end
+
                     end
                 end
 
@@ -283,7 +291,7 @@ module operacional(
                     if(senha_done) begin
                         if(senha_ok) estado <= SETUP;
                         else begin
-                            estado <= VALIDAR_SENHA_MASTER;
+                            estado <= VALIDAR_SENHA_MASTER_IDLE;
                         end
                     end
                 end
