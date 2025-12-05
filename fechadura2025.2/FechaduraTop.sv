@@ -38,9 +38,22 @@ module FechaduraTop (
         .setup_on(),
         .digitos_value(),
         .digitos_valid(),
-        
-    )
+        .display_en(),
+        .bcd_pac(),
+        .data_setup_new(),
+        .data_setup_ok()
+    );
 
+
+    decodificador_de_teclado Decodificador(
+    .clk(clk),
+    .rst(rst_5s),
+    .enable(),
+    .col_matriz(),
+    .lin_matriz(),
+    .digitos_value(),
+    .digitos_valid()
+    );
 
 
 
