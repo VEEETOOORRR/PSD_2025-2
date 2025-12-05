@@ -248,36 +248,7 @@ module DE1_SOC_golden_top(
 
 //=======================================================
 //  REG/WIRE declarations
-//=======================================================
-
-module divfreq(input reset, clock, output logic clk_i);
-  int cont;
-  always @(posedge clock or posedge reset) begin
-    if(reset) begin
-      cont  = 0;
-      clk_i = 0;
-    end
-    else
-      if( cont <= 25000 )
-        cont++;
-      else begin
-        clk_i = ~clk_i;
-        cont = 0;
-      end
-  end
-endmodule
-
-
-
-divfreq  div(
-	.reset(SW[9]),
-	.clock(CLOCK2_50),
-	.clk_i(clk_div)
-	);
-
-wire clk_div;
-	
-	
+//=======================================================	
 	
 FechaduraTop Ftop(
 	.clk(clk_div), 

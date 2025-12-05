@@ -1,4 +1,3 @@
-`include "Tipos.sv"
 
 module decodificador_de_teclado (
 input 		logic		clk,
@@ -36,7 +35,7 @@ output		logic 		digitos_valid
 
     assign lin_matriz = reg_linha;
 
-    always_ff @(posedge clk or posedge rst) begin
+    always_ff @(posedge clk or posedge rst or negedge enable) begin
         if(rst || !enable) begin
             estado <= INIT;
             reg_linha <= 4'b0111;
@@ -47,6 +46,15 @@ output		logic 		digitos_valid
             reg_digitos_value.digits <= {20{4'hF}};
 
         end else begin
+		  
+			  // ---- DEFAULTS: evitam latches ---- //
+			  estado <= estado;
+			  reg_linha <= reg_linha;
+			  reg_coluna <= reg_coluna;
+			  value <= value;
+			  Tcont_db <= Tcont_db;
+			  Tcont_timeout <= Tcont_timeout;
+			  reg_digitos_value <= reg_digitos_value;		  
             case (estado)
                 INIT: begin
                     estado <= SCAN;
@@ -98,10 +106,10 @@ output		logic 		digitos_valid
                 end
 
                 OUTPUT_READY: begin
-                    if((value != 4'hA) && (value != 4'hB))
+                    if((value != 4'hA) && (value != 4'hB)) begin
                         reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};
                         estado <= HOLD;
-                    else if(value == 4'hA) // Dígito *
+                    end else if(value == 4'hA) // Dígito *
                         estado <= VALID_KEY; 
                     else if(value == 4'hB) begin // Dígito #
                         estado <= VALID_KEY;
@@ -133,7 +141,7 @@ output		logic 		digitos_valid
 
             INIT: begin
                 digitos_valid = 0;
-                digitos_value = {20{4'hF}};
+                digitos_value.digits = {20{4'hF}};
             end
 
             SCAN: begin
@@ -161,7 +169,7 @@ output		logic 		digitos_valid
 
             TIMEOUT: begin
                 digitos_valid = 1;
-                digitos_value = {20{4'hE}};
+                digitos_value.digits = {20{4'hE}};
             end
 
             HOLD: begin
@@ -171,12 +179,12 @@ output		logic 		digitos_valid
 
             LIMPA: begin
                 digitos_valid = 0;
-                digitos_value = {20{4'hF}}
+                digitos_value.digits = {20{4'hF}};
             end
 
             default: begin
-                digitos_vlaid = 0;
-                digitos_value = {20{4'hF}}
+                digitos_valid = 0;
+                digitos_value.digits = {20{4'hF}};
             end
         endcase
     end

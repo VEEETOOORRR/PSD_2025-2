@@ -1,4 +1,3 @@
-`include "Tipos.sv"
 
 module display (
     input 		logic 		clk, 

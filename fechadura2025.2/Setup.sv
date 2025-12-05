@@ -1,4 +1,3 @@
-`include "Tipos.sv"
 
 module setup (
 	input		logic		clk,
@@ -113,7 +112,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_master.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_master <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_1;
 							end
 						end
@@ -125,7 +124,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_1.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_1 <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_2;
 							end
 						end
@@ -138,7 +137,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_2.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_2 <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_3;
 							end
 						end
@@ -151,7 +150,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_3.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_3 <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_4;
 							end
 						end
@@ -164,7 +163,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_4.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_4 <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SAVE;
 							end
 						end
@@ -180,6 +179,15 @@ module setup (
 
 	always_comb begin
 		if(rst) begin
+			data_setup_new = reg_data_setup_new;
+			data_setup_ok = 0;
+			display_en = 0;
+			bcd_pac.BCD0 = 4'hF;
+			bcd_pac.BCD1 = 4'hF;
+			bcd_pac.BCD2 = 4'hF;
+			bcd_pac.BCD3 = 4'hF;
+			bcd_pac.BCD4 = 4'hF;
+			bcd_pac.BCD5 = 4'hF;
 		end else begin
 			case(estado)
 				IDLE: begin

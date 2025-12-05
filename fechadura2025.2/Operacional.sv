@@ -1,5 +1,4 @@
-`include "Tipos.sv"
-`include "verifica_senha.sv" // REMOVER AO COLOCAR NO EDAPLAYGROUND!!!!!!
+
 
 module operacional(
     
@@ -689,6 +688,15 @@ module operacional(
                             bcd_pac.BCD4 = 4'hA;
                             bcd_pac.BCD5 = 4'hA;
                         end
+								default: begin
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hA;
+                            bcd_pac.BCD3 = 4'hA;
+                            bcd_pac.BCD4 = 4'hA;
+                            bcd_pac.BCD5 = 4'hA;
+								end
+								
                     endcase
 
                     teclado_en = 0;
