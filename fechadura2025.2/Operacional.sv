@@ -417,6 +417,10 @@ module operacional(
             setup_on = 0;
             tranca = 0;
             bip = 0;
+
+            senha_valid_in = 0;
+            senha_teste = {20{4'hF}};
+            senha_real = {20{4'hF}};
         end
 
         else begin
