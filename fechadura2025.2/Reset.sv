@@ -1,4 +1,4 @@
-module resetHold5s #(parameter TIME_TO_RST = 5)(
+module resetHold5s #(parameter TIME_TO_RST = 5000)(
     input logic clk, reset_in,
     output logic reset_out);
 

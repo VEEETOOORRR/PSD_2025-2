@@ -37,7 +37,7 @@ module FechaduraTop (
     // Teclado
     decodificador_de_teclado Teclado (
         .clk(clk_div),
-        .rst(reset_out),
+        .rst(rst),
         .enable(enable_keyword),
         .col_matriz(matricial_col),
         .lin_matriz(matricial_lin),
@@ -48,7 +48,7 @@ module FechaduraTop (
     // Display
     display Display(
         .clk(clk_div),
-        .rst(reset_out),
+        .rst(rst),
         .enable_o(display_enable_operational),
         .enable_s(display_enable_setup),
         .bcd_packet_operacional(bcd_packet_operacional),
@@ -64,7 +64,7 @@ module FechaduraTop (
     // Setup
     setup Setup(
         .clk(clk_div),
-        .rst(reset_out),
+        .rst(rst),
         .setup_on(setup_online),
         .digitos_value(digitos_value_keyword),
         .digitos_valid(digitos_valid_keyword),
@@ -77,7 +77,7 @@ module FechaduraTop (
     // Operacional 
     operacional Operacional(
         .clk(clk_div),
-        .rst(reset_out),
+        .rst(rst),
         .sensor_contato(sensor_de_contato),
         .botao_interno(botao_interno),
         .botao_bloqueio(botao_bloqueio),

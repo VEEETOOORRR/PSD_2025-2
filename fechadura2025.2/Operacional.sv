@@ -428,7 +428,7 @@ module operacional(
             case(estado)
 
                 INIT: begin
-					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD0 = 4'h0;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -446,7 +446,7 @@ module operacional(
                 end
 
                 PORTA_FECHADA: begin
-					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD0 = 4'h1;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -465,7 +465,7 @@ module operacional(
                 end
 
                 PORTA_ESCORADA: begin
-					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD0 = 4'h2;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -483,7 +483,7 @@ module operacional(
                 end
 
                 PORTA_ABERTA: begin
-					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD0 = 4'h3;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
