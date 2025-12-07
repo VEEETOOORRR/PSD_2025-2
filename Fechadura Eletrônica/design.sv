@@ -529,7 +529,7 @@ output		logic 		digitos_valid
                 end
 
                 SCAN: begin
-                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT; // Considera 1 pulso para ir pro timeout
                     else begin
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BP) begin
@@ -544,7 +544,7 @@ output		logic 		digitos_valid
                 end
 
                 DEBOUNCE: begin
-                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT;
                     else begin 
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BS) begin
