@@ -964,6 +964,7 @@ module operacional(
                         estado <= VALIDAR_SENHA_WAIT;
                     end else begin
                         estado <= SENHA_ERROR;
+                        cont_tempo_entre_leituras <= 0;
                     end
                     // Se errado jogar para o estado SENHA_ERROR 
                 end
@@ -971,7 +972,10 @@ module operacional(
                 VALIDAR_SENHA_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
-                        if(senha_ok) estado <= PORTA_ESCORADA;
+                        if(senha_ok) begin
+                             estado <= PORTA_ESCORADA;
+                             number_of_attempts <= 0;
+                        end
                         else begin
                             estado <= VALIDAR_SENHA;
                             cont_senhas <= cont_senhas + 1;
@@ -1014,28 +1018,31 @@ module operacional(
                 SENHA_ERROR: begin
                     // Toda vez que entra nesse estado - incrementa em um a quantidade de tentativas
                     number_of_attempts <= number_of_attempts + 1;
-
-                    // Se for maior que 5 já manda para o estado de bloqueio para aguardar 30s
-                    if (number_of_attempts > 5) begin
-                        estado <= BLOQUEIO;
-                    end
-
-                    // Se não, retorna para outra tentativa
-                    else begin
-                        estado <= PORTA_FECHADA;
-                    end
+                    estado <= BLOQUEIO;
                 end
 
                 BLOQUEIO: begin
                     // Verifica o limite de tempo de 30s e habilita a entrada novamente
-                    if (block_cont >= TIME_BLOCKED - 1) begin
-                        estado <= PORTA_FECHADA;
-                    end
+                    if(number_of_attempts > 5) begin
+                        if (block_cont >= TIME_BLOCKED - 1) begin
+                            estado <= PORTA_FECHADA;
+                        end
 
-                    // Conta os 30s
-                    else begin
-                        estado <= BLOQUEIO;
-                        block_cont <= block_cont + 1;
+                        // Conta os 30s
+                        else begin
+                            estado <= BLOQUEIO;
+                            block_cont <= block_cont + 1;
+                        end
+
+                    end else begin
+                        if (block_cont >= INTERVAL_BETWEEN_READINGS + 1) begin
+                            estado <= PORTA_FECHADA;
+                        end
+
+                        else begin
+                            estado <= BLOQUEIO;
+                            block_cont <= block_cont + 1;
+                        end
                     end
                 end
 
