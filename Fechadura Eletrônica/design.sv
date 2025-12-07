@@ -642,7 +642,7 @@ output		logic 		digitos_valid
             end
 
             TIMEOUT: begin
-                digitos_valid = 1;
+                digitos_valid = 0;
                 digitos_value = reg_digitos_value;
             end
 
