@@ -763,7 +763,7 @@ module operacional(
     parameter TIME_BLOCKED = 30000;                             // 30s
 
     // VARIAVEIS INTERNAS (CONTADORAS)
-    logic [2:0] number_of_attempts;                             // Número de tentativas de senha (abrir porta) - 5 tentativas
+    logic [10:0] number_of_attempts;                             // Número de tentativas de senha (abrir porta) - 5 tentativas
     logic [14:0] close_door_cont;                               // Contagem de tempo para fechar/bipar a porta - 5s - 5000
     logic [14:0] block_cont;                                    // Contagem de tempo para block - 30s - 30000
     logic [15:0] cont_bip_time;                                 // Contagem para BIPAR a porta
@@ -1406,6 +1406,25 @@ module operacional(
                 end
 
                 SENHA_ERROR: begin
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
+
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 1;
+                    bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
+                end
+
+                BLOQUEIO: begin
                     case (number_of_attempts)
                         1: begin
                             bcd_pac.BCD0 = 4'hA;
@@ -1447,26 +1466,16 @@ module operacional(
                             bcd_pac.BCD4 = 4'hA;
                             bcd_pac.BCD5 = 4'hB;
                         end
+
+                        default: begin
+                            bcd_pac.BCD0 = 4'hA;
+                            bcd_pac.BCD1 = 4'hA;
+                            bcd_pac.BCD2 = 4'hA;
+                            bcd_pac.BCD3 = 4'hA;
+                            bcd_pac.BCD4 = 4'hA;
+                            bcd_pac.BCD5 = 4'hA;
+                        end
                     endcase
-
-                    teclado_en = 0;
-                    display_en = 1;
-                    setup_on = 0;
-                    tranca = 1;
-                    bip = 0;
-
-                    senha_valid_in = 0;
-                    senha_teste = {20{4'hF}};
-                    senha_real = {20{4'hF}};
-                end
-
-                BLOQUEIO: begin
-					bcd_pac.BCD0 = 4'hA;
-					bcd_pac.BCD1 = 4'hA;
-					bcd_pac.BCD2 = 4'hA;
-					bcd_pac.BCD3 = 4'hA;
-					bcd_pac.BCD4 = 4'hA;
-					bcd_pac.BCD5 = 4'hA;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
