@@ -493,6 +493,7 @@ output		logic 		digitos_valid
         OUTPUT_READY, 
         DECODE,
         TIMEOUT,
+        TIMEOUT_VALID,
         HOLD,
         LIMPA
     } estado;
@@ -528,7 +529,7 @@ output		logic 		digitos_valid
                 end
 
                 SCAN: begin
-                    if(Tcont_timeout >= 5000) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT;
                     else begin
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BP) begin
@@ -543,13 +544,13 @@ output		logic 		digitos_valid
                 end
 
                 DEBOUNCE: begin
-                    if(Tcont_timeout >= 5000) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT;
                     else begin 
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BS) begin
                             estado <= SCAN;
                             Tcont_db <= 0;
-                        end else if (Tcont_db >= 50)begin
+                        end else if (Tcont_db >= 50 - 1)begin
                             estado <= DECODE;
                         end else if (BP) begin
                             estado <= DEBOUNCE;
@@ -559,9 +560,14 @@ output		logic 		digitos_valid
                 end
 
                 TIMEOUT: begin
+                    reg_digitos_value.digits <= {20{4'hE}};
+                    estado <= TIMEOUT_VALID;
+                    Tcont_timeout <= 0;
+                end
+
+                TIMEOUT_VALID: begin
                     reg_digitos_value.digits <= {20{4'hF}};
                     estado <= SCAN;
-                    Tcont_timeout <= 0;
                 end
 
                 DECODE: begin
@@ -637,7 +643,12 @@ output		logic 		digitos_valid
 
             TIMEOUT: begin
                 digitos_valid = 1;
-                digitos_value = {20{4'hE}};
+                digitos_value = reg_digitos_value;
+            end
+
+            TIMEOUT_VALID: begin
+                digitos_valid = 1;
+                digitos_value = reg_digitos_value;
             end
 
             HOLD: begin
