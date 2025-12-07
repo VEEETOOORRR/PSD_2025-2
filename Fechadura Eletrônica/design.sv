@@ -865,6 +865,7 @@ module operacional(
                                 end
 
                                 default: begin // Tem alguma senha aí
+                                    senha_digitada.digits <= digitos_value.digits;
                                     estado <= VALIDAR_SENHA;
                                 end
                             endcase
