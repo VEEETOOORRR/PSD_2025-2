@@ -838,8 +838,6 @@ module operacional(
                 end
 
                 PORTA_FECHADA: begin
-
-                    // Botão de bloqueio para desativar entrada pelo teclado
                     if (botao_bloqueio) begin
                         cont_db_np <= 0;
                         estado <= DEBOUNCE_NP;
@@ -851,27 +849,27 @@ module operacional(
                         cont_db_dtrc <= 0;
                     end
 
-                    else if(!reg_np) begin
-                        // Entrada inválida - timeout do teclado
-                        if (digitos_valid == 1 && (digitos_value.digits[0] == 4'hE)) begin
-                            if(reg_data_setup.bip_status)
-                            estado <= BIP_TIMEOUT;
-                        end
+                    else if (!reg_np) begin
+                        if(digitos_valid) begin
+                            case(digitos_value.digits[0])
+                                4'hB: begin // Apertou #
+                                    estado <= PORTA_FECHADA;
+                                end
 
-                        // Entrada válida - verificar
-                        else if (digitos_valid == 1 && (digitos_value.digits[0] != 4'hB)) begin
-                            senha_digitada.digits <= digitos_value.digits;
-                            cont_senhas <= 0;
-                            estado <= VALIDAR_SENHA;
-                        end
+                                4'hE: begin // Timeout
+                                    estado <= BIP_TIMEOUT;
+                                end
 
-                        // Apertou #
-                        else begin
-                            estado <= PORTA_FECHADA;
-                        end
-                    end
+                                4'hF: begin // Digitos_value vazio
+                                    estado <= PORTA_FECHADA;
+                                end
 
-                    else estado <= PORTA_FECHADA;
+                                default: begin // Tem alguma senha aí
+                                    estado <= VALIDAR_SENHA;
+                                end
+                            endcase
+                        end else estado <= PORTA_FECHADA;
+                    end else estado <= PORTA_FECHADA;
                 end
 
                 PORTA_ESCORADA: begin
