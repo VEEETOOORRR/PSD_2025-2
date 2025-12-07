@@ -975,10 +975,6 @@ module operacional(
                   //$display("OIEEEEEEEEEEEEEEEEEEEEEEEE"); --------------------------------------------------
                     estado <= VALIDAR_SENHA_MASTER_WAIT;
 
-                    // Se errar - se mantem nesse estado
-
-                    // Se quiser sair digitar o botão no teclado - ESTADO ABERTA
-
                 end
 
 				VALIDAR_SENHA_MASTER_IDLE: begin
@@ -1128,12 +1124,21 @@ module operacional(
     always_comb begin
 
         if (rst) begin
-            bcd_pac = 'hBBBBBB;
+            bcd_pac.BCD0 = 4'hB;
+            bcd_pac.BCD1 = 4'hB;
+            bcd_pac.BCD2 = 4'hB;
+            bcd_pac.BCD3 = 4'hB;
+            bcd_pac.BCD4 = 4'hB;
+            bcd_pac.BCD5 = 4'hB;
             teclado_en = 0;
-            display_en = 1;
+            display_en = 0;
             setup_on = 0;
             tranca = 0;
             bip = 0;
+
+            senha_valid_in = 0;
+            senha_teste = {20{4'hF}};
+            senha_real = {20{4'hF}};
         end
 
         else begin
@@ -1141,7 +1146,6 @@ module operacional(
             case(estado)
 
                 INIT: begin
-                  	//bcd_pac = 'hBBBBBBB;
 					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
@@ -1256,7 +1260,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -1303,37 +1307,34 @@ module operacional(
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+                    
+                    senha_valid_in = 0;
 
                     case(cont_senhas)
                         0: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_1;
                             senha_real = senha_digitada;
                         end
                         1: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_2;
                             senha_real = senha_digitada;
                         end
                         2: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_3;
                             senha_real = senha_digitada;
                         end
                         3: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_4;
                             senha_real = senha_digitada;
                         end
                         default: begin // se cont_senhas chegar a 4, significa que todas as senhas foram testadas e nenhuma passou.
-                            senha_valid_in = 0;
                             senha_teste = {20{4'hF}};
                             senha_real = {20{4'hF}};
                         end
                     endcase
                 end
 
-                 VALIDAR_SENHA_MASTER: begin
+                VALIDAR_SENHA_MASTER: begin
                     bcd_pac.BCD0 = 4'hB;
                     bcd_pac.BCD1 = 4'hB;
                     bcd_pac.BCD2 = 4'hB;
@@ -1343,7 +1344,7 @@ module operacional(
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 1;
@@ -1361,11 +1362,11 @@ module operacional(
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 0;
-                    senha_teste = senha_digitada;;
+                    senha_teste = senha_digitada;
                     senha_real = reg_data_setup.senha_master;
                 end
 
@@ -1379,7 +1380,7 @@ module operacional(
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 0;
@@ -1427,7 +1428,7 @@ module operacional(
                             bcd_pac.BCD2 = 4'hA;
                             bcd_pac.BCD3 = 4'hA;
                             bcd_pac.BCD4 = 4'hA;
-                            bcd_pac.BCD5 = 4'hA;
+                            bcd_pac.BCD5 = 4'hB;
                         end
                     endcase
 
@@ -1539,7 +1540,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -1558,7 +1559,7 @@ module operacional(
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
-                    display_en = 0;
+                    display_en = 1;
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
@@ -1569,18 +1570,18 @@ module operacional(
                 end
 
                 default: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
-                    display_en = 1;
+                    display_en = 0;
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
-                    
+
                     senha_valid_in = 0;
                     senha_teste = {20{4'hF}};
                     senha_real = {20{4'hF}};
@@ -1783,6 +1784,15 @@ module setup (
 
 	always_comb begin
 		if(rst) begin
+            data_setup_new = reg_data_setup_new;
+            data_setup_ok = 0;
+            display_en = 0;
+            bcd_pac.BCD0 = 4'hB;
+            bcd_pac.BCD1 = 4'hB;
+            bcd_pac.BCD2 = 4'hB;
+            bcd_pac.BCD3 = 4'hB;
+            bcd_pac.BCD4 = 4'hB;
+            bcd_pac.BCD5 = 4'hB;
 		end else begin
 			case(estado)
 				IDLE: begin
