@@ -65,175 +65,176 @@ module verifica_senha(
                 end
 
                 VALIDANDO_SENHA: begin
-
-                    if (size_senha == 4) begin
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3]
-                        ) begin
-                            estado <= CORRETA;                            
-                        end 
-                        else begin
-                            pulse_value <= pulse_value + 1;
-                        end
-                    end
-
-                    else if (size_senha == 5) begin
-
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4]                       
-                        ) begin
-                            estado <= CORRETA;
-                        end else begin
-                            pulse_value <= pulse_value + 1;
+                    if ((pulse_value + size_senha) > 20) estado <= INCORRETA; // senha não se encontra no array
+                    else begin
+                        if (size_senha == 4) begin
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3]
+                            ) begin
+                                estado <= CORRETA;                            
+                            end 
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
                         end
 
-                    end
+                        else if (size_senha == 5) begin
 
-                    else if (size_senha == 6) begin
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4]                       
+                            ) begin
+                                estado <= CORRETA;
+                            end else begin
+                                pulse_value <= pulse_value + 1;
+                            end
 
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5]                
-                        ) begin
-                            estado <= CORRETA;
                         end
 
-                        else begin
-                            pulse_value <= pulse_value + 1;                            
+                        else if (size_senha == 6) begin
+
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5]                
+                            ) begin
+                                estado <= CORRETA;
+                            end
+
+                            else begin
+                                pulse_value <= pulse_value + 1;                            
+                            end
+
                         end
 
-                    end
+                        else if (size_senha == 7) begin
 
-                    else if (size_senha == 7) begin
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6]
+                            ) begin
+                                estado <= CORRETA;
+                            end
 
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6]
-                        ) begin
-                            estado <= CORRETA;
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
+
                         end
 
-                        else begin
-                            pulse_value <= pulse_value + 1;
+                        else if (size_senha == 8) begin
+
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
+                                senha_real.digits[7] == senha_teste.digits[pulse_value+7] 
+                            ) begin
+                                estado <= CORRETA;
+                            end
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
+
                         end
 
-                    end
-
-                    else if (size_senha == 8) begin
-
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
-                            senha_real.digits[7] == senha_teste.digits[pulse_value+7] 
-                        ) begin
-                            estado <= CORRETA;
-                        end
-                        else begin
-                            pulse_value <= pulse_value + 1;
-                        end
-
-                    end
-
-                    else if (size_senha == 9) begin
+                        else if (size_senha == 9) begin
+                                
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
+                                senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
+                                senha_real.digits[8] == senha_teste.digits[pulse_value+8]
+                            ) begin
+                                estado <= CORRETA;
+                            end
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
                             
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
-                            senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
-                            senha_real.digits[8] == senha_teste.digits[pulse_value+8]
-                        ) begin
-                            estado <= CORRETA;
-                        end
-                        else begin
-                            pulse_value <= pulse_value + 1;
-                        end
-                        
-                    end
-
-                    else if (size_senha == 10) begin
-
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
-                            senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
-                            senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
-                            senha_real.digits[9] == senha_teste.digits[pulse_value+9]
-                        ) begin
-                            estado <= CORRETA;
-                        end
-                        else begin
-                            pulse_value <= pulse_value + 1;
-                        end
-                    end
-
-                    else if (size_senha == 11) begin
-
-
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value+0] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
-                            senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
-                            senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
-                            senha_real.digits[9] == senha_teste.digits[pulse_value+9] &&
-                            senha_real.digits[10] == senha_teste.digits[pulse_value+10]
-                        ) begin
-                            estado <= CORRETA;
-                        end
-                        else begin
-                            pulse_value <= pulse_value + 1;
-                        end
-                  
-                    end
-
-                    else if (size_senha == 12) begin
-
-                        if (senha_real.digits[0] == senha_teste.digits[pulse_value+0] &&
-                            senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
-                            senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
-                            senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
-                            senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
-                            senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
-                            senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
-                            senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
-                            senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
-                            senha_real.digits[9] == senha_teste.digits[pulse_value+9] &&
-                            senha_real.digits[10] == senha_teste.digits[pulse_value+10] &&
-                            senha_real.digits[11] == senha_teste.digits[pulse_value+11]
-                        ) begin
-                            estado <= CORRETA;
-                        end
-                        else begin
-                            pulse_value <= pulse_value + 1;
                         end
 
+                        else if (size_senha == 10) begin
+
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
+                                senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
+                                senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
+                                senha_real.digits[9] == senha_teste.digits[pulse_value+9]
+                            ) begin
+                                estado <= CORRETA;
+                            end
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
+                        end
+
+                        else if (size_senha == 11) begin
+
+
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value+0] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
+                                senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
+                                senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
+                                senha_real.digits[9] == senha_teste.digits[pulse_value+9] &&
+                                senha_real.digits[10] == senha_teste.digits[pulse_value+10]
+                            ) begin
+                                estado <= CORRETA;
+                            end
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
+                    
+                        end
+
+                        else if (size_senha == 12) begin
+
+                            if (senha_real.digits[0] == senha_teste.digits[pulse_value+0] &&
+                                senha_real.digits[1] == senha_teste.digits[pulse_value+1] &&
+                                senha_real.digits[2] == senha_teste.digits[pulse_value+2] &&
+                                senha_real.digits[3] == senha_teste.digits[pulse_value+3] &&
+                                senha_real.digits[4] == senha_teste.digits[pulse_value+4] &&
+                                senha_real.digits[5] == senha_teste.digits[pulse_value+5] &&
+                                senha_real.digits[6] == senha_teste.digits[pulse_value+6] &&
+                                senha_real.digits[7] == senha_teste.digits[pulse_value+7] &&
+                                senha_real.digits[8] == senha_teste.digits[pulse_value+8] &&
+                                senha_real.digits[9] == senha_teste.digits[pulse_value+9] &&
+                                senha_real.digits[10] == senha_teste.digits[pulse_value+10] &&
+                                senha_real.digits[11] == senha_teste.digits[pulse_value+11]
+                            ) begin
+                                estado <= CORRETA;
+                            end
+                            else begin
+                                pulse_value <= pulse_value + 1;
+                            end
+                        end
                     end
 
                 end
