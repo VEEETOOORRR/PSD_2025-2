@@ -249,7 +249,15 @@ module DE1_SOC_golden_top(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================	
-	
+
+logic clk_div;
+
+divfreq df (
+	.rst(SW[9]),
+	.clk(CLOCK_50),
+	.clk_i(clk_div)
+);
+
 FechaduraTop Ftop(
 	.clk(clk_div), 
 	.rst(!KEY[0]), 

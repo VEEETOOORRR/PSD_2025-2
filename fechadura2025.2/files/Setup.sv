@@ -111,7 +111,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_master.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_master.digits <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_1;
 							end
 						end
@@ -123,7 +123,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_1.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_1.digits <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_2;
 							end
 						end
@@ -136,7 +136,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_2.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_2.digits <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_3;
 							end
 						end
@@ -149,7 +149,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_3.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_3.digits <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SENHA_4;
 							end
 						end
@@ -162,7 +162,7 @@ module setup (
 						else if(digitos_value == {20{4'hB}}) estado <= SAVE;
 						else begin
 							if(digitos_value.digits[3] != 4'hF) begin
-								reg_data_setup_new.senha_4.digits[11:0] <= digitos_value.digits[11:0];
+								reg_data_setup_new.senha_4.digits <= {{8{4'hF}}, digitos_value.digits[11:0]};
 								estado <= SAVE;
 							end
 						end

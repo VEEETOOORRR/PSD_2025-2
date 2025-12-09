@@ -3,12 +3,11 @@ module resetHold5s #(parameter TIME_TO_RST = 5)(
     output logic reset_out);
 
 
-    logic [19:0] cont;
+    int cont;
 
     always_ff @(posedge clk) begin
         if(reset_in) begin
             if(cont <= TIME_TO_RST*1000) cont <= cont + 1;
-				else cont <= TIME_TO_RST*1000;
         end else cont <= 0; 
 
     end
