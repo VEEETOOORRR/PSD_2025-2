@@ -21,6 +21,3 @@ typedef struct packed {
     senhaPac_t  senha_3;
     senhaPac_t  senha_4;
 } setupPac_t;
-
-
-

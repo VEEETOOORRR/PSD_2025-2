@@ -1,5 +1,3 @@
-`include "Tipos.sv"
-
 module verifica_senha(
 
     input logic         clk,

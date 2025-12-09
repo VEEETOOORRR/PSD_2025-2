@@ -1,4 +1,3 @@
-
 module decodificador_de_teclado (
 input 		logic		clk,
 input		logic		rst,
@@ -17,6 +16,7 @@ output		logic 		digitos_valid
         OUTPUT_READY, 
         DECODE,
         TIMEOUT,
+        TIMEOUT_VALID,
         HOLD,
         LIMPA
     } estado;
@@ -46,22 +46,13 @@ output		logic 		digitos_valid
             reg_digitos_value.digits <= {20{4'hF}};
 
         end else begin
-		  
-			  // ---- DEFAULTS: evitam latches ---- //
-			  estado <= estado;
-			  reg_linha <= reg_linha;
-			  reg_coluna <= reg_coluna;
-			  value <= value;
-			  Tcont_db <= Tcont_db;
-			  Tcont_timeout <= Tcont_timeout;
-			  reg_digitos_value <= reg_digitos_value;		  
             case (estado)
                 INIT: begin
                     estado <= SCAN;
                 end
 
                 SCAN: begin
-                    if(Tcont_timeout >= 5000) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT; // Considera 1 pulso para ir pro timeout
                     else begin
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BP) begin
@@ -76,13 +67,13 @@ output		logic 		digitos_valid
                 end
 
                 DEBOUNCE: begin
-                    if(Tcont_timeout >= 5000) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT;
                     else begin 
                         Tcont_timeout <= Tcont_timeout + 1;
                         if(BS) begin
                             estado <= SCAN;
                             Tcont_db <= 0;
-                        end else if (Tcont_db >= 50)begin
+                        end else if (Tcont_db >= 50 - 1)begin
                             estado <= DECODE;
                         end else if (BP) begin
                             estado <= DEBOUNCE;
@@ -92,9 +83,14 @@ output		logic 		digitos_valid
                 end
 
                 TIMEOUT: begin
+                    reg_digitos_value.digits <= {20{4'hE}};
+                    estado <= TIMEOUT_VALID;
+                    Tcont_timeout <= 0;
+                end
+
+                TIMEOUT_VALID: begin
                     reg_digitos_value.digits <= {20{4'hF}};
                     estado <= SCAN;
-                    Tcont_timeout <= 0;
                 end
 
                 DECODE: begin
@@ -106,12 +102,13 @@ output		logic 		digitos_valid
                 end
 
                 OUTPUT_READY: begin
-                    if((value != 4'hA) && (value != 4'hB)) begin
+                  if((value != 4'hA) && (value != 4'hB)) begin
                         reg_digitos_value.digits <= {reg_digitos_value.digits[18:0], value};
                         estado <= HOLD;
-                    end else if(value == 4'hA) // Dígito *
+                    end else if(value == 4'hA) begin // Digito *
                         estado <= VALID_KEY; 
-                    else if(value == 4'hB) begin // Dígito #
+                  	end
+                  	else if(value == 4'hB) begin // Digito #
                         estado <= VALID_KEY;
                         reg_digitos_value.digits <= {20{4'hB}};
                     end
@@ -141,7 +138,7 @@ output		logic 		digitos_valid
 
             INIT: begin
                 digitos_valid = 0;
-                digitos_value.digits = {20{4'hF}};
+                digitos_value = {20{4'hF}};
             end
 
             SCAN: begin
@@ -168,8 +165,13 @@ output		logic 		digitos_valid
             end
 
             TIMEOUT: begin
+                digitos_valid = 0;
+                digitos_value = reg_digitos_value;
+            end
+
+            TIMEOUT_VALID: begin
                 digitos_valid = 1;
-                digitos_value.digits = {20{4'hE}};
+                digitos_value = reg_digitos_value;
             end
 
             HOLD: begin
@@ -179,12 +181,12 @@ output		logic 		digitos_valid
 
             LIMPA: begin
                 digitos_valid = 0;
-                digitos_value.digits = {20{4'hF}};
+              	digitos_value = {20{4'hF}};
             end
 
             default: begin
                 digitos_valid = 0;
-                digitos_value.digits = {20{4'hF}};
+              	digitos_value = {20{4'hF}};
             end
         endcase
     end

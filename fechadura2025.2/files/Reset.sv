@@ -1,4 +1,4 @@
-module resetHold5s #(parameter TIME_TO_RST = 5000)(
+module resetHold5s #(parameter TIME_TO_RST = 5)(
     input logic clk, reset_in,
     output logic reset_out);
 
@@ -7,13 +7,14 @@ module resetHold5s #(parameter TIME_TO_RST = 5000)(
 
     always_ff @(posedge clk) begin
         if(reset_in) begin
-            if(cont <= TIME_TO_RST) cont <= cont + 1;
+            if(cont <= TIME_TO_RST*1000) cont <= cont + 1;
+				else cont <= TIME_TO_RST*1000;
         end else cont <= 0; 
 
     end
 
     always_comb begin
-        if(cont >= TIME_TO_RST) reset_out = 1;
+        if(cont >= TIME_TO_RST*1000) reset_out = 1;
         else reset_out = 0;
     end
 

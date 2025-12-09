@@ -1,5 +1,3 @@
-
-
 module operacional(
     
     input		logic		clk,
@@ -52,19 +50,18 @@ module operacional(
     parameter DEBOUNCE_NAO_PERTURBE = 3000;                     // 3s
     parameter INTERVAL_BETWEEN_READINGS = 1000;                 // 1s
     parameter TIME_BLOCKED = 30000;                             // 30s
-    parameter TIME_CLOSE_DOOR_AUTO = 5000;                      // 5s
 
     // VARIAVEIS INTERNAS (CONTADORAS)
-    logic [2:0] number_of_attempts;                             // Número de tentativas de senha (abrir porta) - 5 tentativas
+    logic [10:0] number_of_attempts;                             // Número de tentativas de senha (abrir porta) - 5 tentativas
     logic [14:0] close_door_cont;                               // Contagem de tempo para fechar/bipar a porta - 5s - 5000
     logic [14:0] block_cont;                                    // Contagem de tempo para block - 30s - 30000
     logic [15:0] cont_bip_time;                                 // Contagem para BIPAR a porta
     logic [15:0] cont_tranca_aut;                               // Contagem para trancar a porta automaticamente
-    logic [15:0] cont_db_np;                                     // Contagem debounce não perturbe - 100ms
-    logic [15:0] cont_db_dtrc;                                   // Contagem debounce destrancar lingueta - 100ms
-    logic [15:0] cont_db_trc;                                    // Contagem debounce trancar lingueta - 100ms
-    logic [15:0] cont_db_setup;                                  // Contagem debounce setup - 100ms
-    logic [2:0] cont_senhas;                                    // registrador para armazenar quantas senhas foram testadas
+  	logic [15:0] cont_db_np;                                     // Contagem debounce não perturbe - 100ms
+  	logic [15:0] cont_db_dtrc;                                   // Contagem debounce destrancar lingueta - 100ms
+  	logic [15:0] cont_db_trc;                                    // Contagem debounce trancar lingueta - 100ms
+  	logic [15:0] cont_db_setup;                                  // Contagem debounce setup - 100ms
+  	logic [15:0] cont_senhas;                                    // registrador para armazenar quantas senhas foram testadas
 
 	setupPac_t reg_data_setup;                                  // registrador pra guardar os dados de configuração da fechadura
 
@@ -130,8 +127,6 @@ module operacional(
                 end
 
                 PORTA_FECHADA: begin
-
-                    // Botão de bloqueio para desativar entrada pelo teclado
                     if (botao_bloqueio) begin
                         cont_db_np <= 0;
                         estado <= DEBOUNCE_NP;
@@ -143,27 +138,28 @@ module operacional(
                         cont_db_dtrc <= 0;
                     end
 
-                    else if(!reg_np) begin
-                        // Entrada inválida - timeout do teclado
-                        if (digitos_valid == 1 && (digitos_value.digits[0] == 4'hE)) begin
-                            if(reg_data_setup.bip_status)
-                            estado <= BIP_TIMEOUT;
-                        end
+                    else if (!reg_np) begin
+                        if(digitos_valid) begin
+                            case(digitos_value.digits[0])
+                                4'hB: begin // Apertou #
+                                    estado <= PORTA_FECHADA;
+                                end
 
-                        // Entrada válida - verificar
-                        else if (digitos_valid == 1 && (digitos_value.digits[0] != 4'hB)) begin
-                            senha_digitada.digits <= digitos_value.digits;
-                            cont_senhas <= 0;
-                            estado <= VALIDAR_SENHA;
-                        end
+                                4'hE: begin // Timeout
+                                    estado <= BIP_TIMEOUT;
+                                end
 
-                        // Apertou #
-                        else begin
-                            estado <= PORTA_FECHADA;
-                        end
-                    end
+                                4'hF: begin // Digitos_value vazio
+                                    estado <= PORTA_FECHADA;
+                                end
 
-                    else estado <= PORTA_FECHADA;
+                                default: begin // Tem alguma senha aí
+                                    senha_digitada.digits <= digitos_value.digits;
+                                    estado <= VALIDAR_SENHA;
+                                end
+                            endcase
+                        end else estado <= PORTA_FECHADA;
+                    end else estado <= PORTA_FECHADA;
                 end
 
                 PORTA_ESCORADA: begin
@@ -175,19 +171,20 @@ module operacional(
 
                     // Se a porta estiver escorada e o botao_interno for ativo ela sera trancada
                     else if (botao_interno) begin
+                      	cont_db_trc <= 0;							// Ok?
                         estado <= DEBOUNCE_TRC;
                     end
 
                     // Se a porta estiver escorada e passar do tempo de trancamento automático
-                    else if(cont_tranca_aut <= reg_data_setup.tranca_aut_time * 1000) begin
+                  else if(cont_tranca_aut >= (reg_data_setup.tranca_aut_time * 1000 - 1)) begin
                         estado <= PORTA_FECHADA;
                     end
 
                     // Mantém na porta escorada se n tiver nenhum estimulo
                     else begin
                         estado <= PORTA_ESCORADA;
-                        if(cont_tranca_aut <= reg_data_setup.tranca_aut_time * 1000) begin
-                            cont_tranca_aut <= cont_tranca_aut + 1;
+                      if(cont_tranca_aut < (reg_data_setup.tranca_aut_time * 1000 - 1)) begin
+                           cont_tranca_aut <= cont_tranca_aut + 1;
                         end
                     end
                 end
@@ -207,17 +204,20 @@ module operacional(
                     end
 
                     // Se o contador do tempo de bip for maior que o armazenado, BIPAR porta aberta
-                    else if ((reg_data_setup.bip_status) && (cont_bip_time >= data_setup_new.bip_time)) begin
+                  	// Multiplica o bip time por 1000 para ficar em ms
+                  	else if ((reg_data_setup.bip_status) && (cont_bip_time >= (reg_data_setup.bip_time * 1000 - 1))) begin
                         estado <= BIP_PORTA_O;
                     end
 
                     // Mantém no porta aberta
                     else begin
                         estado <= PORTA_ABERTA;
+                        // Incrementa o contador do tempo do bip
+                        if((reg_data_setup.bip_status) && (cont_bip_time < (reg_data_setup.bip_time * 1000 - 1))) begin
+                            cont_bip_time <= cont_bip_time + 1;
+                        end
                     end
 
-                    // Incrementa o contador do tempo do bip
-                    if(reg_data_setup.bip_status) cont_bip_time <= cont_bip_time + 1;
                 end
 
                 SETUP: begin
@@ -231,7 +231,7 @@ module operacional(
 
                 PRE_SETUP: begin
                     // Se vencer o debounce do botao config
-                    if (cont_db_setup >= DEBOUNCE_BUTTON) begin
+                    if (cont_db_setup >= DEBOUNCE_BUTTON - 1) begin
                         estado <= VALIDAR_SENHA_MASTER_IDLE;
                         cont_db_setup <= 0;
                     end
@@ -253,6 +253,7 @@ module operacional(
                         estado <= VALIDAR_SENHA_WAIT;
                     end else begin
                         estado <= SENHA_ERROR;
+                        //cont_tempo_entre_leituras <= 0;
                     end
                     // Se errado jogar para o estado SENHA_ERROR 
                 end
@@ -260,7 +261,10 @@ module operacional(
                 VALIDAR_SENHA_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
-                        if(senha_ok) estado <= PORTA_ESCORADA;
+                        if(senha_ok) begin
+                             estado <= PORTA_ESCORADA;
+                             number_of_attempts <= 0;
+                        end
                         else begin
                             estado <= VALIDAR_SENHA;
                             cont_senhas <= cont_senhas + 1;
@@ -271,10 +275,12 @@ module operacional(
                 VALIDAR_SENHA_MASTER: begin
                     // Validar senha master com digitos_value e valid
                     // Se ocorrer tudo certo, - ESTADO DE SETUP
+                  //$display("OIEEEEEEEEEEEEEEEEEEEEEEEE"); --------------------------------------------------
                     estado <= VALIDAR_SENHA_MASTER_WAIT;
+
                 end
 
-                VALIDAR_SENHA_MASTER_IDLE: begin
+				VALIDAR_SENHA_MASTER_IDLE: begin
                     if(digitos_valid) begin
                         if(digitos_value == {20{4'hB}}) begin // digita # para sair do senha_master
                             estado <= PORTA_ABERTA;
@@ -301,34 +307,37 @@ module operacional(
                 SENHA_ERROR: begin
                     // Toda vez que entra nesse estado - incrementa em um a quantidade de tentativas
                     number_of_attempts <= number_of_attempts + 1;
-
-                    // Se for maior que 5 já manda para o estado de bloqueio para aguardar 30s
-                    if (number_of_attempts > 5) begin
-                        estado <= BLOQUEIO;
-                    end
-
-                    // Se não, retorna para outra tentativa
-                    else begin
-                        estado <= PORTA_FECHADA;
-                    end
+                    estado <= BLOQUEIO;
                 end
 
                 BLOQUEIO: begin
                     // Verifica o limite de tempo de 30s e habilita a entrada novamente
-                    if (block_cont >= TIME_BLOCKED) begin
-                        estado <= PORTA_FECHADA;
-                    end
+                    if(number_of_attempts > 5) begin
+                        if (block_cont >= TIME_BLOCKED - 1) begin
+                            estado <= PORTA_FECHADA;
+                        end
 
-                    // Conta os 30s
-                    else begin
-                        estado <= BLOQUEIO;
-                        block_cont <= block_cont + 1;
+                        // Conta os 30s
+                        else begin
+                            estado <= BLOQUEIO;
+                            block_cont <= block_cont + 1;
+                        end
+
+                    end else begin
+                        if (block_cont >= INTERVAL_BETWEEN_READINGS + 1) begin
+                            estado <= PORTA_FECHADA;
+                        end
+
+                        else begin
+                            estado <= BLOQUEIO;
+                            block_cont <= block_cont + 1;
+                        end
                     end
                 end
 
                 DEBOUNCE_DTRC: begin
                     // Vence o debounce de destrancamento
-                    if (cont_db_dtrc >= DEBOUNCE_BUTTON && (!botao_interno)) begin
+                    if ((cont_db_dtrc >= DEBOUNCE_BUTTON - 1) && (!botao_interno)) begin
                         estado <= PORTA_ESCORADA;
                         reg_np <= 0;
                         cont_db_dtrc <= 0;
@@ -342,13 +351,13 @@ module operacional(
 
                     // Incrementa contador de debounce
                     else begin
-                        if(cont_db_dtrc <= DEBOUNCE_BUTTON) cont_db_dtrc <= cont_db_dtrc + 1; 
+                        cont_db_dtrc <= cont_db_dtrc + 1; 
                     end
                 end
 
                 DEBOUNCE_TRC: begin
                     // Vence o debounce para trancar
-                    if (cont_db_trc >= DEBOUNCE_BUTTON) begin
+                  	if (cont_db_trc >= DEBOUNCE_BUTTON - 1) begin
                         estado <= PORTA_FECHADA;
                         cont_db_trc <= 0;
                     end
@@ -363,10 +372,10 @@ module operacional(
                     end
                 end
 
-                DEBOUNCE_NP: begin
+				DEBOUNCE_NP: begin
                     // Vence o debounce para entrar no não perturbe
                     if(!botao_bloqueio) begin
-                        if(cont_db_np >= DEBOUNCE_NAO_PERTURBE) begin
+                        if(cont_db_np >= DEBOUNCE_NAO_PERTURBE - 1) begin
                             estado <= NAO_PERTURBE;
                             cont_db_np <= 0;
                         end else begin
@@ -374,7 +383,7 @@ module operacional(
                             cont_db_np <= 0;
                         end
                     end else begin
-                        if(cont_db_np < DEBOUNCE_NAO_PERTURBE) begin
+                        if(cont_db_np < DEBOUNCE_NAO_PERTURBE - 1) begin
                             estado <= DEBOUNCE_NP;
                             cont_db_np <= cont_db_np + 1;
                         end else begin
@@ -398,7 +407,7 @@ module operacional(
                     
                     // ?
                     else if (!sensor_contato) begin
-                        estado <= PORTA_FECHADA;
+                        estado <= PORTA_ESCORADA;     // Porta Escorada ou Trancada
                     end
                 end
 
@@ -421,9 +430,14 @@ module operacional(
     always_comb begin
 
         if (rst) begin
-            bcd_pac = 'hBBBBBB;
+            bcd_pac.BCD0 = 4'hB;
+            bcd_pac.BCD1 = 4'hB;
+            bcd_pac.BCD2 = 4'hB;
+            bcd_pac.BCD3 = 4'hB;
+            bcd_pac.BCD4 = 4'hB;
+            bcd_pac.BCD5 = 4'hB;
             teclado_en = 0;
-            display_en = 1;
+            display_en = 0;
             setup_on = 0;
             tranca = 0;
             bip = 0;
@@ -438,7 +452,7 @@ module operacional(
             case(estado)
 
                 INIT: begin
-					bcd_pac.BCD0 = 4'h0;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -455,13 +469,13 @@ module operacional(
                     senha_real = {20{4'hF}};
                 end
 
-                PORTA_FECHADA: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+				PORTA_FECHADA: begin
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
@@ -472,9 +486,9 @@ module operacional(
                     senha_teste = {20{4'hF}};
                     senha_real = {20{4'hF}};
                 end
-
+              	
                 PORTA_ESCORADA: begin
-					bcd_pac.BCD0 = 4'h2;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -492,13 +506,13 @@ module operacional(
                 end
 
                 PORTA_ABERTA: begin
-					bcd_pac.BCD0 = 4'h3;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -516,9 +530,9 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    teclado_en = 1;					// HABILITA O SINAL DO TECLADO
                     display_en = 0; // Quem manda no display nesse estado é o módulo setup.
-                    setup_on = 1;
+                    setup_on = 1;	
                     tranca = 0;
                     bip = 0;
 
@@ -552,7 +566,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -588,41 +602,38 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_WAIT: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
+                    
+                    senha_valid_in = 0;
 
                     case(cont_senhas)
                         0: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_1;
                             senha_real = senha_digitada;
                         end
                         1: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_2;
                             senha_real = senha_digitada;
                         end
                         2: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_3;
                             senha_real = senha_digitada;
                         end
                         3: begin
-                            senha_valid_in = 1;
                             senha_teste = reg_data_setup.senha_4;
                             senha_real = senha_digitada;
                         end
                         default: begin // se cont_senhas chegar a 4, significa que todas as senhas foram testadas e nenhuma passou.
-                            senha_valid_in = 0;
                             senha_teste = {20{4'hF}};
                             senha_real = {20{4'hF}};
                         end
@@ -630,16 +641,16 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 1;
@@ -654,6 +665,43 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
+                    teclado_en = 1;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 0;
+                    bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = senha_digitada;
+                    senha_real = reg_data_setup.senha_master;
+                end
+
+                VALIDAR_SENHA_MASTER_WAIT: begin
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 0;
+                    bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = senha_digitada;
+                    senha_real = reg_data_setup.senha_master;
+                end
+
+                SENHA_ERROR: begin
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
+
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -665,25 +713,7 @@ module operacional(
                     senha_real = {20{4'hF}};
                 end
 
-                VALIDAR_SENHA_MASTER_WAIT: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
-                    display_en = 1;
-                    setup_on = 0;
-                    tranca = 1;
-                    bip = 0;
-
-                    senha_valid_in = 0;
-                    senha_teste = senha_digitada;
-                    senha_real = reg_data_setup.senha_master;
-                end
-
-                SENHA_ERROR: begin
+                BLOQUEIO: begin
                     case (number_of_attempts)
                         1: begin
                             bcd_pac.BCD0 = 4'hA;
@@ -723,37 +753,18 @@ module operacional(
                             bcd_pac.BCD2 = 4'hA;
                             bcd_pac.BCD3 = 4'hA;
                             bcd_pac.BCD4 = 4'hA;
-                            bcd_pac.BCD5 = 4'hA;
+                            bcd_pac.BCD5 = 4'hB;
                         end
-						default: begin
+
+                        default: begin
                             bcd_pac.BCD0 = 4'hA;
                             bcd_pac.BCD1 = 4'hA;
                             bcd_pac.BCD2 = 4'hA;
                             bcd_pac.BCD3 = 4'hA;
                             bcd_pac.BCD4 = 4'hA;
                             bcd_pac.BCD5 = 4'hA;
-								end
-								
+                        end
                     endcase
-
-                    teclado_en = 0;
-                    display_en = 1;
-                    setup_on = 0;
-                    tranca = 1;
-                    bip = 0;
-
-                    senha_valid_in = 0;
-                    senha_teste = {20{4'hF}};
-                    senha_real = {20{4'hF}};
-                end
-
-                BLOQUEIO: begin
-					bcd_pac.BCD0 = 4'hA;
-					bcd_pac.BCD1 = 4'hA;
-					bcd_pac.BCD2 = 4'hA;
-					bcd_pac.BCD3 = 4'hA;
-					bcd_pac.BCD4 = 4'hA;
-					bcd_pac.BCD5 = 4'hA;
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
@@ -844,7 +855,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -863,7 +874,7 @@ module operacional(
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
-                    display_en = 0;
+                    display_en = 1;
                     setup_on = 0;
                     tranca = 1;
                     bip = 0;
@@ -874,18 +885,18 @@ module operacional(
                 end
 
                 default: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     teclado_en = 0;
-                    display_en = 1;
+                    display_en = 0;
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
-                    
+
                     senha_valid_in = 0;
                     senha_teste = {20{4'hF}};
                     senha_real = {20{4'hF}};
