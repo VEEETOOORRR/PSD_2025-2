@@ -52,9 +52,9 @@ output		logic 		digitos_valid
                 end
 
                 SCAN: begin
-                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT; // Considera 1 pulso para ir pro timeout
+                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT; // Considera 1 pulso para ir pro timeout
                     else begin
-                        Tcont_timeout <= Tcont_timeout + 1;
+                        if(digitos_value.digits != {20{4'hF}}) Tcont_timeout <= Tcont_timeout + 1;
                         if(BP) begin
                             estado <= DEBOUNCE;
                             reg_coluna <= col_matriz;
@@ -67,9 +67,9 @@ output		logic 		digitos_valid
                 end
 
                 DEBOUNCE: begin
-                    if(Tcont_timeout >= 5000 - 2) estado <= TIMEOUT;
+                    if(Tcont_timeout >= 5000 - 1) estado <= TIMEOUT;
                     else begin 
-                        Tcont_timeout <= Tcont_timeout + 1;
+                        if(digitos_value.digits != {20{4'hF}}) Tcont_timeout <= Tcont_timeout + 1;
                         if(BS) begin
                             estado <= SCAN;
                             Tcont_db <= 0;

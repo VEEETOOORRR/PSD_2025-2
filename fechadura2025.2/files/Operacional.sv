@@ -157,6 +157,7 @@ module operacional(
                                 default: begin // Tem alguma senha aí
                                     estado <= VALIDAR_SENHA;
                                   	senha_digitada.digits <= digitos_value.digits;
+                                    //cont_senhas <= 0;
                                 end
                             endcase
                         end else estado <= PORTA_FECHADA;
@@ -167,7 +168,9 @@ module operacional(
 
                     // Se a porta estiver escorada e o sensor de contato desativado - a porta será aberta
                     if (sensor_contato) begin
-                        cont_bip_time <= 0;
+                        cont_bip_time 
+                        <= 0;
+                        cont_tranca_aut <= 0;
                         estado <= PORTA_ABERTA;
                     end
 
@@ -335,7 +338,7 @@ module operacional(
                         end
 
                     end else begin
-                        if (block_cont >= INTERVAL_BETWEEN_READINGS + 1) begin
+                        if (block_cont >= INTERVAL_BETWEEN_READINGS - 1) begin
                             estado <= PORTA_FECHADA;
                         end
 
@@ -490,8 +493,9 @@ module operacional(
                     bcd_pac.BCD2 = digitos_value.digits[1];
                     bcd_pac.BCD3 = digitos_value.digits[2];
                     bcd_pac.BCD4 = digitos_value.digits[3];
-                    bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    bcd_pac.BCD5 = reg_np;
+                    if (reg_np) teclado_en = 0;
+                    else        teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
