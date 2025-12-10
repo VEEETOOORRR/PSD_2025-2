@@ -676,8 +676,8 @@ module operacional(
                     bip = 0;
 
                     senha_valid_in = 1;
-                    senha_teste = senha_digitada;
-                    senha_real = reg_data_setup.senha_master;
+                    senha_teste = reg_data_setup.senha_master;
+                    senha_real = senha_digitada;
                 end
 
                 VALIDAR_SENHA_MASTER_IDLE: begin
@@ -694,8 +694,8 @@ module operacional(
                     bip = 0;
 
                     senha_valid_in = 0;
-                    senha_teste = senha_digitada;
-                    senha_real = reg_data_setup.senha_master;
+                    senha_teste = reg_data_setup.senha_master;
+                    senha_real = senha_digitada;
                 end
 
                 VALIDAR_SENHA_MASTER_WAIT: begin
@@ -712,8 +712,9 @@ module operacional(
                     bip = 0;
 
                     senha_valid_in = 0;
-                    senha_teste = senha_digitada;
-                    senha_real = reg_data_setup.senha_master;
+                    senha_teste = reg_data_setup.senha_master;
+                    senha_real = senha_digitada;
+
                 end
 
                 
