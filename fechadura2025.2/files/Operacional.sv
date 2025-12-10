@@ -103,7 +103,7 @@ module operacional(
 			reg_data_setup.bip_time <= 5;
 			reg_data_setup.tranca_aut_time <= 5;
 			reg_data_setup.senha_master <= {{16{4'hF}}, 4'h1, 4'h2, 4'h3, 4'h4};
-			reg_data_setup.senha_1 <= {{16{4'hF}}, 4'h1, 4'h2, 4'h3, 4'h4};
+			reg_data_setup.senha_1 <= {20{4'hF}};
 			reg_data_setup.senha_2 <= {20{4'hF}};
 			reg_data_setup.senha_3 <= {20{4'hF}};
 			reg_data_setup.senha_4 <= {20{4'hF}};
@@ -180,6 +180,7 @@ module operacional(
                     // Se a porta estiver escorada e passar do tempo de trancamento automático
                   else if(cont_tranca_aut >= (reg_data_setup.tranca_aut_time * 1000 - 1)) begin
                         estado <= PORTA_FECHADA;
+                        cont_tranca_aut <= 0;
                     end
 
                     // Mantém na porta escorada se n tiver nenhum estimulo
@@ -228,6 +229,7 @@ module operacional(
 					if(data_setup_ok) begin
 						reg_data_setup <= data_setup_new;
 						estado <= PORTA_ABERTA;
+						cont_bip_time <= 0; 
 					end else estado <= SETUP;
                 end
 
@@ -236,6 +238,7 @@ module operacional(
                     if (cont_db_setup >= DEBOUNCE_BUTTON - 1) begin
                         estado <= VALIDAR_SENHA_MASTER_IDLE;
                         cont_db_setup <= 0;
+                        senha_digitada <= {20{4'hF}};
                     end
 
                     // Até vencer o debounce
@@ -262,8 +265,11 @@ module operacional(
                 VALIDAR_SENHA_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
-                        if(senha_ok) estado <= PORTA_ESCORADA;
-                        number_of_attempts <= 0;
+                        if(senha_ok) begin 
+                            estado <= PORTA_ESCORADA;
+                            number_of_attempts <= 0;
+                            cont_tranca_aut <= 0;
+                        end
                         else begin
                             estado <= VALIDAR_SENHA;
                             cont_senhas <= cont_senhas + 1;
@@ -288,6 +294,7 @@ module operacional(
                             estado <= PORTA_ABERTA;
                         end else if(digitos_value == {20{4'hE}}) begin
                             estado <= VALIDAR_SENHA_MASTER_IDLE;
+                            senha_digitada <= {20{4'hF}};
                         end else begin
                             estado <= VALIDAR_SENHA_MASTER;
                             senha_digitada.digits <= digitos_value.digits;
@@ -302,6 +309,7 @@ module operacional(
                         if(senha_ok) estado <= SETUP;
                         else begin
                             estado <= VALIDAR_SENHA_MASTER_IDLE;
+                            senha_digitada <= {20{4'hF}};
                         end
                     end
                 end
@@ -478,10 +486,10 @@ module operacional(
 
 				PORTA_FECHADA: begin
                     bcd_pac.BCD0 = 4'h1;
-                    bcd_pac.BCD1 = 4'hB;
-                    bcd_pac.BCD2 = 4'hB;
-                    bcd_pac.BCD3 = 4'hB;
-                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD1 = digitos_value.digits[0];
+                    bcd_pac.BCD2 = digitos_value.digits[1];
+                    bcd_pac.BCD3 = digitos_value.digits[2];
+                    bcd_pac.BCD4 = digitos_value.digits[3];
                     bcd_pac.BCD5 = 4'hB;
                     teclado_en = 1;
                     display_en = 1;
@@ -657,7 +665,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -693,7 +701,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -849,7 +857,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1; // Coloquei valor 1 nele. O pulso onde o teclado ficava desligado tava dando muita dor de cabeça.
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
