@@ -626,7 +626,7 @@ module operacional(
                     teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     case(cont_senhas)
@@ -686,7 +686,7 @@ module operacional(
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 0;
@@ -704,7 +704,7 @@ module operacional(
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 0;
