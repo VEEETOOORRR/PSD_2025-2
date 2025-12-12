@@ -32,7 +32,6 @@ module operacional(
         VALIDAR_SENHA_MASTER,                                   // Inicializa verifica_senha com um pulso em senha_valid_in
         VALIDAR_SENHA_MASTER_IDLE,                              // Aguarda alguma senha ser digitada antes de mandar verificar
         VALIDAR_SENHA_MASTER_WAIT,                              // Aguarda retorno do verifica_senha
-        VALIDAR_SENHA_MASTER_DB,                                // Um pulso de clock só pra garantir
         SENHA_ERROR,                                            // Conta a quantidade de tentativas de senha
         BLOQUEIO,                                               // Deixa o sistema inoperante por 30s
         DEBOUNCE_DTRC,                                          // Debounce para destrancar a porta (lingueta)
@@ -312,7 +311,7 @@ module operacional(
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
                         if(senha_ok) begin
-                            estado <= VALIDAR_SENHA_MASTER_DB;
+                            estado <= SETUP;
                         end
                         else begin
                             estado <= VALIDAR_SENHA_MASTER_IDLE;
@@ -320,15 +319,6 @@ module operacional(
                         end
                     end
                 end
-
-                VALIDAR_SENHA_MASTER_DB: begin
-                    if(!digitos_valid) begin
-                        estado <= SETUP;
-                    end
-
-                    else estado <= VALIDAR_SENHA_MASTER_DB;
-                end
-
 				SENHA_ERROR: begin
                     // Toda vez que entra nesse estado - incrementa em um a quantidade de tentativas
                     number_of_attempts <= number_of_attempts + 1;
@@ -580,7 +570,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;   
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -598,7 +588,7 @@ module operacional(
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
 					bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 1;
@@ -640,7 +630,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -682,7 +672,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -718,7 +708,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 0;
+                    teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -729,25 +719,6 @@ module operacional(
                     senha_real = senha_digitada;
 
                 end
-
-                VALIDAR_SENHA_MASTER_DB: begin
-					bcd_pac.BCD0 = 4'hB;
-					bcd_pac.BCD1 = 4'hB;
-					bcd_pac.BCD2 = 4'hB;
-					bcd_pac.BCD3 = 4'hB;
-					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'h0;
-                    teclado_en = 0;
-                    display_en = 1;
-                    setup_on = 0;
-                    tranca = 0;
-                    bip = 0;
-
-                    senha_valid_in = 0;
-                    senha_teste = {20{4'hF}};
-                    senha_real = {20{4'hF}};
-                end
-
                 
               	SENHA_ERROR: begin
                     bcd_pac.BCD0 = 4'hB;
