@@ -36,7 +36,7 @@ module FechaduraTop (
   	//assign setup_on = setup_online;
   
   	// Reset
-	resetHold5s #(.TIME_TO_RST(1)) Reset(
+	resetHold5s #(.TIME_TO_RST(5)) Reset(
         .clk(clk),
         .reset_in(rst),
       	.reset_out(reset_out)

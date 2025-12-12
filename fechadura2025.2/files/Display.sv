@@ -46,11 +46,11 @@ module display (
     always_comb begin
         if(rst) begin
             HEX0 = 7'b0000000;
-            HEX1 = 7'b1111111;
-            HEX2 = 7'b1111111;
-            HEX3 = 7'b1111111;
-            HEX4 = 7'b1111111;
-            HEX5 = 7'b1111111;
+            HEX1 = 7'b0000000;
+            HEX2 = 7'b0000000;
+            HEX3 = 7'b0000000;
+            HEX4 = 7'b0000000;
+            HEX5 = 7'b0000000;
         end else begin
             if(enable_o == enable_s) begin
                 HEX0 = 7'b1111111;

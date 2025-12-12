@@ -26,6 +26,7 @@ module setup (
 	estado_t estado;
 
 	setupPac_t reg_data_setup_new;
+	setupPac_t reg_data_temp;
 
 
 	always_ff @(posedge clk or posedge rst) begin
@@ -39,6 +40,15 @@ module setup (
 			reg_data_setup_new.senha_2 <= {20{4'hF}};
 			reg_data_setup_new.senha_3 <= {20{4'hF}};
 			reg_data_setup_new.senha_4 <= {20{4'hF}};
+
+			reg_data_temp.bip_status <= 1;
+			reg_data_temp.bip_time <= 5;
+			reg_data_temp.tranca_aut_time <= 5;
+			reg_data_temp.senha_master <= {{16{4'hF}}, 4'h1, 4'h2, 4'h3, 4'h4};
+			reg_data_temp.senha_1 <= {20{4'hF}};
+			reg_data_temp.senha_2 <= {20{4'hF}};
+			reg_data_temp.senha_3 <= {20{4'hF}};
+			reg_data_temp.senha_4 <= {20{4'hF}};
 		end else begin
 			case(estado)
 				IDLE: begin
@@ -61,7 +71,7 @@ module setup (
 								estado <= HABILITA_BIP;
 							end
 						end
-					end else begin 
+					end else begin
 						estado <= HABILITA_BIP;
 					end
 				end

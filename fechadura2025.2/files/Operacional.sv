@@ -32,6 +32,7 @@ module operacional(
         VALIDAR_SENHA_MASTER,                                   // Inicializa verifica_senha com um pulso em senha_valid_in
         VALIDAR_SENHA_MASTER_IDLE,                              // Aguarda alguma senha ser digitada antes de mandar verificar
         VALIDAR_SENHA_MASTER_WAIT,                              // Aguarda retorno do verifica_senha
+        VALIDAR_SENHA_MASTER_DB,                                // Um pulso de clock só pra garantir
         SENHA_ERROR,                                            // Conta a quantidade de tentativas de senha
         BLOQUEIO,                                               // Deixa o sistema inoperante por 30s
         DEBOUNCE_DTRC,                                          // Debounce para destrancar a porta (lingueta)
@@ -261,6 +262,7 @@ module operacional(
                         estado <= VALIDAR_SENHA_WAIT;
                     end else begin
                         estado <= SENHA_ERROR;
+                        cont_senhas <= 0;
                     end
                     // Se errado jogar para o estado SENHA_ERROR 
                 end
@@ -309,12 +311,16 @@ module operacional(
                 VALIDAR_SENHA_MASTER_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
-                        if(senha_ok) estado <= SETUP;
+                        if(senha_ok) estado <= VALIDAR_SENHA_MASTER_DB;
                         else begin
                             estado <= VALIDAR_SENHA_MASTER_IDLE;
                             senha_digitada <= {20{4'hF}};
                         end
                     end
+                end
+
+                VALIDAR_SENHA_MASTER_DB: begin
+                    estado <= SETUP;
                 end
 
 				SENHA_ERROR: begin
@@ -329,6 +335,7 @@ module operacional(
                     if(number_of_attempts > 5) begin
                         if (block_cont >= TIME_BLOCKED - 1) begin
                             estado <= PORTA_FECHADA;
+                            number_of_attempts <= 0;
                         end
 
                         // Conta os 30s
@@ -445,21 +452,21 @@ module operacional(
     always_comb begin
 
         if (rst) begin
-				bcd_pac.BCD0 = 4'hB;
-				bcd_pac.BCD1 = 4'hB;
-				bcd_pac.BCD2 = 4'hB;
-				bcd_pac.BCD3 = 4'hB;
-				bcd_pac.BCD4 = 4'hB;
-				bcd_pac.BCD5 = 4'hB;
+            bcd_pac.BCD0 = 4'hB;
+            bcd_pac.BCD1 = 4'hB;
+            bcd_pac.BCD2 = 4'hB;
+            bcd_pac.BCD3 = 4'hB;
+            bcd_pac.BCD4 = 4'hB;
+            bcd_pac.BCD5 = 4'hB;
             teclado_en = 0;
             display_en = 1;
             setup_on = 0;
             tranca = 0;
             bip = 0;
 
-			  senha_valid_in = 0;
-			  senha_teste = {20{4'hF}};
-			  senha_real = {20{4'hF}};
+            senha_valid_in = 0;
+            senha_teste = {20{4'hF}};
+            senha_real = {20{4'hF}};
 	
 		 
         end
@@ -470,7 +477,7 @@ module operacional(
 
                 INIT: begin
                   	//bcd_pac = 'hBBBBBBB;
-					bcd_pac.BCD0 = 4'h0;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -488,12 +495,12 @@ module operacional(
                 end
 
 				PORTA_FECHADA: begin
-                    bcd_pac.BCD0 = 4'h1;
-                    bcd_pac.BCD1 = digitos_value.digits[0];
-                    bcd_pac.BCD2 = digitos_value.digits[1];
-                    bcd_pac.BCD3 = digitos_value.digits[2];
-                    bcd_pac.BCD4 = digitos_value.digits[3];
-                    bcd_pac.BCD5 = reg_np;
+                    bcd_pac.BCD0 = 4'hB;
+                    bcd_pac.BCD1 = 4'hB;
+                    bcd_pac.BCD2 = 4'hB;
+                    bcd_pac.BCD3 = 4'hB;
+                    bcd_pac.BCD4 = 4'hB;
+                    bcd_pac.BCD5 = 4'hB;
                     if (reg_np) teclado_en = 0;
                     else        teclado_en = 1;
                     display_en = 1;
@@ -507,7 +514,7 @@ module operacional(
                 end
               	
                 PORTA_ESCORADA: begin
-					bcd_pac.BCD0 = 4'h2;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -525,7 +532,7 @@ module operacional(
                 end
 
                 PORTA_ABERTA: begin
-					bcd_pac.BCD0 = 4'h3;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
@@ -635,22 +642,22 @@ module operacional(
 
                     case(cont_senhas)
                         0: begin
-                            senha_valid_in = 1;
+                            senha_valid_in = 0;
                             senha_teste = reg_data_setup.senha_1;
                             senha_real = senha_digitada;
                         end
                         1: begin
-                            senha_valid_in = 1;
+                            senha_valid_in = 0;
                             senha_teste = reg_data_setup.senha_2;
                             senha_real = senha_digitada;
                         end
                         2: begin
-                            senha_valid_in = 1;
+                            senha_valid_in = 0;
                             senha_teste = reg_data_setup.senha_3;
                             senha_real = senha_digitada;
                         end
                         3: begin
-                            senha_valid_in = 1;
+                            senha_valid_in = 0;
                             senha_teste = reg_data_setup.senha_4;
                             senha_real = senha_digitada;
                         end
@@ -669,10 +676,10 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 1;
+                    tranca = 0;
                     bip = 0;
 
                     senha_valid_in = 1;
@@ -681,12 +688,12 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER_IDLE: begin
-					bcd_pac.BCD0 = 4'h4;
+					bcd_pac.BCD0 = 4'hB;
 					bcd_pac.BCD1 = 4'hB;
 					bcd_pac.BCD2 = 4'hB;
 					bcd_pac.BCD3 = 4'hB;
 					bcd_pac.BCD4 = 4'hB;
-					bcd_pac.BCD5 = 4'hB;
+					bcd_pac.BCD5 = 4'h0;
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
@@ -705,7 +712,7 @@ module operacional(
                     bcd_pac.BCD3 = 4'hB;
                     bcd_pac.BCD4 = 4'hB;
                     bcd_pac.BCD5 = 4'hB;
-                    teclado_en = 1;
+                    teclado_en = 0;
                     display_en = 1;
                     setup_on = 0;
                     tranca = 0;
@@ -715,6 +722,24 @@ module operacional(
                     senha_teste = reg_data_setup.senha_master;
                     senha_real = senha_digitada;
 
+                end
+
+                VALIDAR_SENHA_MASTER_DB: begin
+					bcd_pac.BCD0 = 4'hB;
+					bcd_pac.BCD1 = 4'hB;
+					bcd_pac.BCD2 = 4'hB;
+					bcd_pac.BCD3 = 4'hB;
+					bcd_pac.BCD4 = 4'hB;
+					bcd_pac.BCD5 = 4'h0;
+                    teclado_en = 0;
+                    display_en = 1;
+                    setup_on = 0;
+                    tranca = 0;
+                    bip = 0;
+
+                    senha_valid_in = 0;
+                    senha_teste = {20{4'hF}};
+                    senha_real = {20{4'hF}};
                 end
 
                 
@@ -921,7 +946,7 @@ module operacional(
                     setup_on = 0;
                     tranca = 0;
                     bip = 0;
-                    
+
                     senha_valid_in = 0;
                     senha_teste = {20{4'hF}};
                     senha_real = {20{4'hF}};

@@ -48,7 +48,7 @@ module verifica_senha(
                 DIMENSAO: begin
 
                     // Estado para descobrir o tamanho da senha
-                    if ((senha_real.digits[3] == 4'hF) || (senha_real.digits == {20{4'hF}})) estado <= INCORRETA; // senha invalida
+                    if ((senha_real.digits[3] == 4'hF) || (senha_real.digits == {20{4'hF}}) || (senha_teste.digits == {20{4'hF}})) estado <= INCORRETA; // senha invalida
                     else begin
                         if      (senha_teste.digits[4]  == 4'hF) size_senha <= 4;
                         else if (senha_teste.digits[5]  == 4'hF) size_senha <= 5;
