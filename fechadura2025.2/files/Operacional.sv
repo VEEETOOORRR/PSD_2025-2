@@ -311,7 +311,9 @@ module operacional(
                 VALIDAR_SENHA_MASTER_WAIT: begin
                     // Aguarda o verifica_senha retornar algum resultado.
                     if(senha_done) begin
-                        if(senha_ok) estado <= VALIDAR_SENHA_MASTER_DB;
+                        if(senha_ok) begin
+                            estado <= VALIDAR_SENHA_MASTER_DB;
+                        end
                         else begin
                             estado <= VALIDAR_SENHA_MASTER_IDLE;
                             senha_digitada <= {20{4'hF}};
@@ -320,7 +322,11 @@ module operacional(
                 end
 
                 VALIDAR_SENHA_MASTER_DB: begin
-                    estado <= SETUP;
+                    if(!digitos_valid) begin
+                        estado <= SETUP;
+                    end
+
+                    else estado <= VALIDAR_SENHA_MASTER_DB;
                 end
 
 				SENHA_ERROR: begin
