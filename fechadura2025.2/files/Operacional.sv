@@ -155,8 +155,10 @@ module operacional(
                                 end
 
                                 default: begin // Tem alguma senha aí
-                                    estado <= VALIDAR_SENHA;
-                                  	senha_digitada.digits <= digitos_value.digits;
+                                    if(digitos_value.digits[3] != 4'hF) begin
+                                        estado <= VALIDAR_SENHA;
+                                        senha_digitada.digits <= digitos_value.digits;
+                                    end else estado <= PORTA_FECHADA;
                                     //cont_senhas <= 0;
                                 end
                             endcase
@@ -328,7 +330,7 @@ module operacional(
 
                 BLOQUEIO: begin
                     // Verifica o limite de tempo de 30s e habilita a entrada novamente
-                    if(number_of_attempts > 5) begin
+                    if(number_of_attempts > 4) begin
                         if (block_cont >= TIME_BLOCKED - 1) begin
                             estado <= PORTA_FECHADA;
                             number_of_attempts <= 0;
@@ -633,7 +635,7 @@ module operacional(
                     teclado_en = 1;
                     display_en = 1;
                     setup_on = 0;
-                    tranca = 0;
+                    tranca = 1;
                     bip = 0;
 
                     case(cont_senhas)
@@ -773,15 +775,6 @@ module operacional(
                             bcd_pac.BCD4 = 4'hB;
                             bcd_pac.BCD5 = 4'hB;
                         end
-                        5: begin
-                            bcd_pac.BCD0 = 4'hA;
-                            bcd_pac.BCD1 = 4'hA;
-                            bcd_pac.BCD2 = 4'hA;
-                            bcd_pac.BCD3 = 4'hA;
-                            bcd_pac.BCD4 = 4'hA;
-                            bcd_pac.BCD5 = 4'hB;
-                        end
-
                         default: begin
                             bcd_pac.BCD0 = 4'hA;
                             bcd_pac.BCD1 = 4'hA;
