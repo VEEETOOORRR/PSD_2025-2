@@ -1,27 +1,27 @@
 module FechaduraTop (
 	
   
-  	input 	logic clk, 
-  	input 	logic rst, 
-  	input 	logic sensor_de_contato, 
-  	input 	logic botao_interno, 
-  	input 	logic botao_bloqueio, 
-  	input 	logic botao_config,
-	input		logic [3:0] matricial_col,
-	output	logic [3:0] matricial_lin,
-	output 	logic [6:0] dispHex0, 
-  	output 	logic [6:0] dispHex1, 
-	output 	logic [6:0] dispHex2, 
-  	output 	logic [6:0] dispHex3, 
-  	output 	logic [6:0] dispHex4, 
-	output 	logic [6:0] dispHex5, 
-	output 	logic tranca, 
-  	output 	logic bip
+    input 	logic clk, 
+    input 	logic rst, 
+    input 	logic sensor_de_contato, 
+    input 	logic botao_interno, 
+    input 	logic botao_bloqueio, 
+    input 	logic botao_config,
+    input		logic [3:0] matricial_col,
+    output	logic [3:0] matricial_lin,
+    output 	logic [6:0] dispHex0, 
+    output 	logic [6:0] dispHex1, 
+    output 	logic [6:0] dispHex2, 
+    output 	logic [6:0] dispHex3, 
+    output 	logic [6:0] dispHex4, 
+    output 	logic [6:0] dispHex5, 
+    output 	logic tranca, 
+    output 	logic bip
 
 );
    
   	// Sinais Internos
-  	 logic           reset_out;                                // Output do módulo RESET
+  	logic           reset_out;                                // Output do módulo RESET
     logic           enable_keyword;                           // Output do módulo TECLADO
     logic           digitos_valid_keyword;                    // Output do módulo TECLADO
     senhaPac_t      digitos_value_keyword;                    // Output do módulo TECLADO
